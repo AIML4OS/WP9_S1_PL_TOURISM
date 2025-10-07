@@ -7,7 +7,7 @@ project:
 website:
   page-navigation: true
   title: "Introduction to `ggplot2`"
-  site-url: "https://AIML4OS.github.io/WP9_S1_PL_TOURISM/"
+  site-url: "https://github.com/AIML4OS/WP9_S1_PL_TOURISM"
   repo-url: "https://github.com/AIML4OS/WP9_S1_PL_TOURISM"
   repo-actions: [edit, source, issue]
   # favicon: images/Template2.png
