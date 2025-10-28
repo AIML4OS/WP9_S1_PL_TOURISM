@@ -9,15 +9,13 @@ Loading dataset.
 
 ```{r}
 #| warning: false
-#| eval: false
-
+#| eval: true
+data <- readRDS("~/work/data/WP9_S1_Tourism_synt.rds")
+head(data)
 
 ```
 
 
-
 # Conclusion
-
-Now you know everything on `ggplot2`.
 
 
