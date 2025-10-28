@@ -11,7 +11,7 @@ DEST_DIR="$HOME/work/data"
 mkdir -p "$DEST_DIR"
 
 # === Download a first file ===
-DATA_PATH="s3/donnees-insee/diffusion/ETAT_CIVIL/2020/DECES_COM_1019.csv"
+DATA_PATH="s3/jareknapora/data_WP9_S1_PL/WP9_S1_Tourism_synt.rds"
 echo "Downloading $DATA_PATH to $DEST_FILE..."
 mc cp "$DATA_PATH" "$DEST_DIR"
 
