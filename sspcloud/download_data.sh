@@ -6,7 +6,7 @@ echo "Executing the download_data.sh script"
 # and stores it in the ~/work/data directory.
 
 # === Config destination folder ===
-DEST_DIR="$HOME/WP9_S1_PL_TOURISM/sspcloud"
+DEST_DIR="$HOME/work/data"
 # Ensure destination folder exists
 mkdir -p "$DEST_DIR"
 
