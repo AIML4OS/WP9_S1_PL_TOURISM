@@ -10,7 +10,7 @@ Loading dataset.
 ```{r}
 #| warning: false
 #| eval: true
-data <- readRDS("~/work/data/WP9_S1_Tourism_synt.rds")
+data <- readRDS("~/WP9_S1_PL_TOURISM/sspcloud/WP9_S1_Tourism_synt.rds")
 head(data)
 
 ```
