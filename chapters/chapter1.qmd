@@ -10,7 +10,16 @@ Loading dataset.
 ```{r}
 #| warning: false
 #| eval: true
-data <- readRDS("~/WP9_S1_PL_TOURISM/sspcloud/WP9_S1_Tourism_synt.rds")
+url <- "https://raw.githubusercontent.com/AIML4OS/WP9_S1_PL_TOURISM/main/sspcloud/WP9_S1_Tourism_synt.rds"
+
+# Utwórz plik tymczasowy
+temp_file <- tempfile(fileext = ".rds")
+
+# Pobierz plik
+download.file(url, temp_file, mode = "wb")
+
+# Wczytaj plik RDS
+data <- readRDS(temp_file)
 head(data)
 
 ```
