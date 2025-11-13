@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 echo "Executing the download_data.sh script"
 
 # === Description ===
@@ -10,18 +10,42 @@ DEST_DIR="$HOME/work/data"
 # Ensure destination folder exists
 mkdir -p "$DEST_DIR"
 
-# === Download a first file ===
-DATA_PATH="s3/jareknapora/data_WP9_S1_PL/WP9_S1_Tourism_synt.rds"
-echo "Downloading $DATA_PATH to $DEST_FILE..."
-mc cp "$DATA_PATH" "$DEST_DIR"
+# === S3 settings ===
 
-# === Check success ===
-if [ $? -eq 0 ]; then
-  echo "✅ File downloaded successfully to $DEST_FILE"
-else
-  echo "❌ Failed to download file from $DATA_PATH"
-  exit 1
-fi
+# Configure alias for the public S3 endpoint (anonymous access)
+mc alias set s3 https://minio.lab.sspcloud.fr "" ""
 
-# === Download a second file ===
-# Repeat the code above for each file
+# === Download all data files ===
+# You can modify the list of files
+FILES=(
+    "s3/oliviermeslin/AIML4OS/ETAT_CIVIL/2020/DECES_COM_1019.csv"
+    "s3/oliviermeslin/AIML4OS/ETAT_CIVIL/2020/NAISSANCES_COM_1019.csv"
+)
+
+# Function to download with retry
+download_file() {
+    local file=$1
+    local dest=$2
+    local retries=3
+    local count=0
+
+    while [ $count -lt $retries ]; do
+        echo "Attempt $((count+1)) to download $file..."
+        if mc cp "$file" "$dest"; then
+            echo "Download of $file succeeded."
+            return 0
+        else
+            echo "Download failed for $file. Retrying..."
+            ((count++))
+            sleep 2
+        fi
+    done
+    echo "Failed to download $file after $retries attempts."
+    return 1
+}
+
+# Iterate and download each file
+for FILE in "${FILES[@]}"; do
+    echo "Downloading $FILE to $DEST_DIR..."
+    download_file "$FILE" "$DEST_DIR"
+done
