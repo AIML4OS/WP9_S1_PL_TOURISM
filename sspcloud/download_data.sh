@@ -18,8 +18,7 @@ mc alias set s3 https://minio.lab.sspcloud.fr "" ""
 # === Download all data files ===
 # You can modify the list of files
 FILES=(
-    "s3/oliviermeslin/AIML4OS/ETAT_CIVIL/2020/DECES_COM_1019.csv"
-    "s3/oliviermeslin/AIML4OS/ETAT_CIVIL/2020/NAISSANCES_COM_1019.csv"
+    "s3/jareknapora/data_WP9_S1_PL/WP9_S1_Tourism_synt.rds"
 )
 
 # Function to download with retry
