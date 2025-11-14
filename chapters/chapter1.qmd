@@ -22,6 +22,9 @@ download.file(url, temp_file, mode = "wb")
 data <- readRDS(temp_file)
 head(data)
 
+data2=  readRDS("~/work/data/WP9_S1_Tourism_synt.rds")
+head(data2)
+
 ```
 
 
