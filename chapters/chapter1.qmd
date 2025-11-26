@@ -1,6 +1,8 @@
+# Explanatory Data Analysis
 
 
-# Dataset
+
+## Dataset
 
 Loading dataset.
 
@@ -12,18 +14,16 @@ Loading dataset.
 #| eval: true
 url <- "https://raw.githubusercontent.com/AIML4OS/WP9_S1_PL_TOURISM/main/sspcloud/WP9_S1_Tourism_synt.rds"
 
-# Utwórz plik tymczasowy
+# Temporary file
 temp_file <- tempfile(fileext = ".rds")
 
-# Pobierz plik
+# Download data
 download.file(url, temp_file, mode = "wb")
 
-# Wczytaj plik RDS
+# Read RDS
 data <- readRDS(temp_file)
 head(data)
 
-data2=  readRDS("~/work/data/WP9_S1_Tourism_synt.rds")
-head(data2)
 
 ```
 
