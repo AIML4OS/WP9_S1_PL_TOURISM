@@ -90,6 +90,13 @@ suggestedRequirements:
 gsbpm: "5.1" # See complete taxonomy: https://www.unescap.org/sites/default/d8files/event-documents/GSBPM_v5.1_R_for_SBP_8-18Apr2024.pdf
 ---
 
+```{r}
+#| echo: false
+#| eval: true
+
+library(knitr)
+```
+
 
 # About dataset
 

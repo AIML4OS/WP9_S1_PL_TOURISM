@@ -1,18 +1,24 @@
 # Explanatory Data Analysis
 
+## Packages
+
+```{r}
+#| warning: false
+library(dplyr)
+library(knitr)
+```
 
 
 ## Dataset
 
-Loading dataset.
+Dataset is a synthetic version of the original dataset due to disclousure control. Synthetic version was generated with `synthesizer` package available on [CRAN]{https://CRAN.R-project.org/package=synthesizer}. 
 
-
-
+First, we load dataset.
 
 ```{r}
 #| warning: false
 #| eval: true
-url <- "https://raw.githubusercontent.com/AIML4OS/WP9_S1_PL_TOURISM/main/sspcloud/WP9_S1_Tourism_synt.rds"
+url <- "https://github.com/AIML4OS/WP9_S1_PL_TOURISM/raw/refs/heads/main/sspcloud/WP9_S1_Tourism_synt.rds"
 
 # Temporary file
 temp_file <- tempfile(fileext = ".rds")
@@ -22,12 +28,15 @@ download.file(url, temp_file, mode = "wb")
 
 # Read RDS
 data <- readRDS(temp_file)
-head(data)
-
-
 ```
 
+Check structure of the dataset
 
+```{r}
+#| warning: false
+#| eval: true
+head(data) %>% kable()
+```
 # Conclusion
 
 
