@@ -6,12 +6,12 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="author" content="Public Statistician 1">
-<meta name="author" content="Public Statistician 2">
-<meta name="dcterms.date" content="2025-05-16">
-<meta name="description" content="This template is a fast starting pack for AIML4OS projects that use R. For Python projects, see this Github repository.">
+<meta name="author" content="Jarosław Napora">
+<meta name="author" content="Sebastian Wójcik">
+<meta name="dcterms.date" content="2025-11-25">
+<meta name="description" content="This is a presentation of a use case workflow of early imputation with R code. The training material was developed within AIML4OS project.">
 
-<title>Early imputation – Introduction to ggplot2</title>
+<title>Early imputation in the Polish survey of accommodation establishments – Introduction to ggplot2</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -46,8 +46,6 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="site_libs/bootstrap/bootstrap-c30451789a0a2bcd5e941535c675cd30.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/quarto-contrib/fontawesome6-1.2.0/all.min.css" rel="stylesheet">
-<link href="site_libs/quarto-contrib/fontawesome6-1.2.0/latex-fontsize.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -137,8 +135,8 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#what-is-this-template" id="toc-what-is-this-template" class="nav-link active" data-scroll-target="#what-is-this-template">What is this template?</a></li>
-  <li><a href="#how-to-use-it" id="toc-how-to-use-it" class="nav-link" data-scroll-target="#how-to-use-it">How to use it?</a></li>
+  <li><a href="#about-dataset" id="toc-about-dataset" class="nav-link active" data-scroll-target="#about-dataset">About dataset</a></li>
+  <li><a href="#problem-statement" id="toc-problem-statement" class="nav-link" data-scroll-target="#problem-statement">Problem statement</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/AIML4OS/WP9_S1_PL_TOURISM/edit/main/index.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/AIML4OS/WP9_S1_PL_TOURISM/blob/main/index.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/AIML4OS/WP9_S1_PL_TOURISM/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -148,12 +146,12 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Early imputation</h1>
+<h1 class="title">Early imputation in the Polish survey of accommodation establishments</h1>
 </div>
 
 <div>
   <div class="description">
-    <p>This template is a fast starting pack for AIML4OS projects that use <code>R</code>. For <code>Python</code> projects, see <a href="https://github.com/InseeFrLab/AIML4OS-template-quarto-python">this <code>Github</code> repository</a>.</p>
+    <p>This is a presentation of a use case workflow of early imputation with <code>R</code> code. The training material was developed within AIML4OS project.</p>
   </div>
 </div>
 
@@ -163,15 +161,15 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Authors</div>
     <div class="quarto-title-meta-contents">
-             <p><a href="https://github.com/publicstatistician1">Public Statistician 1</a> <a href="mailto:Public.Statistician1@statistics.org" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> </p>
-             <p><a href="https://github.com/publicstatistician2">Public Statistician 2</a> <a href="mailto:Public.Statistician2@statistics.org" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> </p>
+             <p><a href="https://github.com/JarekNapora">Jarosław Napora</a> <a href="mailto:j.napora@stat.gov.pl" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> </p>
+             <p><a href="https://github.com/SebastianWojcik86">Sebastian Wójcik</a> <a href="mailto:s.wojcik@stat.gov.pl" class="quarto-title-author-email"><i class="bi bi-envelope"></i></a> </p>
           </div>
   </div>
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 16, 2025</p>
+      <p class="date">November 25, 2025</p>
     </div>
   </div>
   
@@ -191,13 +189,28 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<section id="what-is-this-template" class="level1">
-<h1>What is this template?</h1>
-<p>This template is a Quarto Website customized for the AIML4OS project, designed to be used with <i class="fa-brands fa-r-project" aria-label="r-project"></i>.</p>
+<section id="about-dataset" class="level1">
+<h1>About dataset</h1>
+<p>Statistics Poland conducts a survey of accommodation establishments with 10 or more bed-places:</p>
+<ul>
+<li>Mandatory survey on monthly base.</li>
+<li>Census survey of approx. 15 ths. of establishments.</li>
+<li>The deadline for submitting reports is the 10th day after the reporting month. In practice, establishments report throughout the entire month.</li>
+<li>Unit response rate is approximately 80% and varies due to seasonality.</li>
+<li>Item non-response pertains mostly to foreign tourist data.</li>
+</ul>
+<p>The survey covers tourist accommodation establishments regardless of the type, owner, and location, as well as establishments with other purposes (not related to tourism) that are temporarily used by tourists (e.g., student dormitories, sports and recreation centers).</p>
+<p>Tourist accommodation establishments classified into the following activity groups according to NACE Rev.&nbsp;2 classification:</p>
+<ul>
+<li>55.1 – hotels and similar accommodation,</li>
+<li>55.2 – holiday and other short-stay accommodation,</li>
+<li>55.3 – camping grounds, recreational vehicle parks and trailer parks.</li>
+</ul>
+<p>The study covers 20 types of tourist accommodation establishments. Data is collected with “Report on the occupancy of tourist accommodation establishments”:</p>
 </section>
-<section id="how-to-use-it" class="level1">
-<h1>How to use it?</h1>
-<p>See <a href="https://aiml4os.github.io/training-material-starting-pack/">this tutorial</a>.</p>
+<section id="problem-statement" class="level1">
+<h1>Problem statement</h1>
+<p>Due to variety of booking systems, accommodation establishments report their data with different timeliness. In such case, early imputation can be used for flash estimates of statistics of accommodation establishments.</p>
 
 
 </section>
