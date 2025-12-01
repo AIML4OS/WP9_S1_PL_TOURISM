@@ -8,12 +8,11 @@ library(dplyr)
 library(knitr)
 ```
 
-
 ## Dataset
 
-Dataset is a synthetic version of the original dataset due to disclousure control. Synthetic version was generated with `synthesizer` package available on [CRAN]{https://CRAN.R-project.org/package=synthesizer}. 
+Dataset is a synthetic version of the original dataset due to disclosure control. Synthetic version was generated with `synthesizer` package available on [CRAN](https://CRAN.R-project.org/package=synthesizer).
 
-First, we load dataset.
+First, we load the dataset.
 
 ```{r}
 #| warning: false
@@ -30,6 +29,13 @@ download.file(url, temp_file, mode = "wb")
 data <- readRDS(temp_file)
 ```
 
+```{r}
+#| echo: false
+#| eval: true
+data$seasonality=NULL
+```
+
+
 Check structure of the dataset
 
 ```{r}
@@ -37,6 +43,21 @@ Check structure of the dataset
 #| eval: true
 head(data) %>% kable()
 ```
+
+These variables are interpreted as follows:
+
+- `regon` - ID of accommodation establishment (original Polish name of ID but content is completely different)
+- `voivodeship` - administrative region code (closely corresponds to NUTS 2)
+- `county` - administrative region code (former LAU 2)
+- `municipality` - administrative region code (current LAU, former LAU 1)
+- `object_type` - recoded type of accommodation establishments, e.g. hotel, motel, etc.
+- `is_seasonal` - `1` when operates through whole year, `2` - when operates in a part of a year (e.g. in a summer or in a winter season)
+- `period_yyyymm` - text label of year and month of reporting (convenient for data ordering)
+- `tourists` - number of tourists accommodated (variable of interest)
+- `month_num` - number of month (`1` for January)
+- `active_in_month` - `1` when establishment operated in a given month (there are many cases when establishment does not provide number of tourists but declares it was active)
+- `year` - year as integer
+- `month` - text label of the month
+
+
 # Conclusion
-
-

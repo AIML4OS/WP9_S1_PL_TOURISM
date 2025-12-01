@@ -4,10 +4,11 @@ project:
   render: # Add HERE new chapters (but not the interactive qmd files)
     - index.qmd
     - chapters/chapter1.qmd
+    - chapters/chapter2.qmd
 
 website:
   page-navigation: true
-  title: "Introduction to `ggplot2`"
+  title: "Early Imputation Use Case"
   site-url: "https://github.com/AIML4OS/WP9_S1_PL_TOURISM"
   repo-url: "https://github.com/AIML4OS/WP9_S1_PL_TOURISM"
   repo-actions: [edit, source, issue]
@@ -20,8 +21,9 @@ website:
       - href: index.qmd
         text: Introduction
       - href: chapters/chapter1.qmd
-        text: Plot with ggplot2
-
+        text: Explanatory Data Analysis
+      - href: chapters/chapter2.qmd
+        text: Feature Engineering
 format:
   html:
     theme:
