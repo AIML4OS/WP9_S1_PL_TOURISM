@@ -1,32 +1,22 @@
 [
   {
-    "objectID": "chapters/chapter1.html",
-    "href": "chapters/chapter1.html",
-    "title": "Explanatory Data Analysis",
+    "objectID": "chapters/chapter2.html",
+    "href": "chapters/chapter2.html",
+    "title": "Feature Engineering",
     "section": "",
-    "text": "library(dplyr)\nlibrary(knitr)\n\n\n\n\nDataset is a synthetic version of the original dataset due to disclousure control. Synthetic version was generated with synthesizer package available on [CRAN]{https://CRAN.R-project.org/package=synthesizer}.\nFirst, we load dataset.\n\nurl &lt;- \"https://github.com/AIML4OS/WP9_S1_PL_TOURISM/raw/refs/heads/main/sspcloud/WP9_S1_Tourism_synt.rds\"\n\n# Temporary file\ntemp_file &lt;- tempfile(fileext = \".rds\")\n\n# Download data\ndownload.file(url, temp_file, mode = \"wb\")\n\n# Read RDS\ndata &lt;- readRDS(temp_file)\n\nCheck structure of the dataset\n\nhead(data) %&gt;% kable()\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nregon\nvoivodeship\ncounty\nmunicipality\nobject_type\nis_seasonal\nperiod_yyyymm\ntourists\nmonth_num\nactive_in_month\nseasonality\nyear\nmonth\n\n\n\n\nID1\n14\n14\n052\n11\n1\n201801\n70\n1\n1\n1\n2018\n01\n\n\nID1\n14\n14\n052\n11\n1\n201802\n93\n2\n1\n1\n2018\n02\n\n\nID1\n14\n14\n052\n11\n1\n201803\n180\n3\n1\n1\n2018\n03\n\n\nID1\n14\n14\n052\n11\n1\n201804\n129\n4\n1\n1\n2018\n04\n\n\nID1\n14\n14\n052\n11\n1\n201805\n268\n5\n1\n1\n2018\n05\n\n\nID1\n14\n14\n052\n11\n1\n201806\n286\n6\n1\n1\n2018\n06",
+    "text": "Feature engineering is the process of transforming raw data into meaningful features that enhance the performance of machine learning models. In this chapter, the emphasis is put on feature creation and feature selection. Feature creation refers to deriving new variables using domain expertise or by detecting patterns within the data, while feature selection focuses on identifying and retaining the most relevant subset of features for analysis.\n\n\n\nlibrary(dplyr)\nlibrary(knitr)",
     "crumbs": [
-      "Plot with ggplot2"
+      "Feature Engineering"
     ]
   },
   {
-    "objectID": "chapters/chapter1.html#packages",
-    "href": "chapters/chapter1.html#packages",
-    "title": "Explanatory Data Analysis",
+    "objectID": "chapters/chapter2.html#packages",
+    "href": "chapters/chapter2.html#packages",
+    "title": "Feature Engineering",
     "section": "",
     "text": "library(dplyr)\nlibrary(knitr)",
     "crumbs": [
-      "Plot with ggplot2"
-    ]
-  },
-  {
-    "objectID": "chapters/chapter1.html#dataset",
-    "href": "chapters/chapter1.html#dataset",
-    "title": "Explanatory Data Analysis",
-    "section": "",
-    "text": "Dataset is a synthetic version of the original dataset due to disclousure control. Synthetic version was generated with synthesizer package available on [CRAN]{https://CRAN.R-project.org/package=synthesizer}.\nFirst, we load dataset.\n\nurl &lt;- \"https://github.com/AIML4OS/WP9_S1_PL_TOURISM/raw/refs/heads/main/sspcloud/WP9_S1_Tourism_synt.rds\"\n\n# Temporary file\ntemp_file &lt;- tempfile(fileext = \".rds\")\n\n# Download data\ndownload.file(url, temp_file, mode = \"wb\")\n\n# Read RDS\ndata &lt;- readRDS(temp_file)\n\nCheck structure of the dataset\n\nhead(data) %&gt;% kable()\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nregon\nvoivodeship\ncounty\nmunicipality\nobject_type\nis_seasonal\nperiod_yyyymm\ntourists\nmonth_num\nactive_in_month\nseasonality\nyear\nmonth\n\n\n\n\nID1\n14\n14\n052\n11\n1\n201801\n70\n1\n1\n1\n2018\n01\n\n\nID1\n14\n14\n052\n11\n1\n201802\n93\n2\n1\n1\n2018\n02\n\n\nID1\n14\n14\n052\n11\n1\n201803\n180\n3\n1\n1\n2018\n03\n\n\nID1\n14\n14\n052\n11\n1\n201804\n129\n4\n1\n1\n2018\n04\n\n\nID1\n14\n14\n052\n11\n1\n201805\n268\n5\n1\n1\n2018\n05\n\n\nID1\n14\n14\n052\n11\n1\n201806\n286\n6\n1\n1\n2018\n06",
-    "crumbs": [
-      "Plot with ggplot2"
+      "Feature Engineering"
     ]
   },
   {
@@ -37,6 +27,36 @@
     "text": "About dataset\nStatistics Poland conducts a survey of accommodation establishments with 10 or more bed-places:\n\nMandatory survey on monthly base.\nCensus survey of approx. 15 ths. of establishments.\nThe deadline for submitting reports is the 10th day after the reporting month. In practice, establishments report throughout the entire month.\nUnit response rate is approximately 80% and varies due to seasonality.\nItem non-response pertains mostly to foreign tourist data.\n\nThe survey covers tourist accommodation establishments regardless of the type, owner, and location, as well as establishments with other purposes (not related to tourism) that are temporarily used by tourists (e.g., student dormitories, sports and recreation centers).\nTourist accommodation establishments classified into the following activity groups according to NACE Rev. 2 classification:\n\n55.1 – hotels and similar accommodation,\n55.2 – holiday and other short-stay accommodation,\n55.3 – camping grounds, recreational vehicle parks and trailer parks.\n\nThe study covers 20 types of tourist accommodation establishments. Data is collected with “Report on the occupancy of tourist accommodation establishments”:\n\n\nProblem statement\nDue to variety of booking systems, accommodation establishments report their data with different timeliness. In such case, early imputation can be used for flash estimates of statistics of accommodation establishments.\n\n\n\n\nReuseCC-BY 4.0",
     "crumbs": [
       "Introduction"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter1.html",
+    "href": "chapters/chapter1.html",
+    "title": "Explanatory Data Analysis",
+    "section": "",
+    "text": "library(dplyr)\nlibrary(knitr)\n\n\n\n\nDataset is a synthetic version of the original dataset due to disclosure control. Synthetic version was generated with synthesizer package available on CRAN.\nFirst, we load the dataset.\n\nurl &lt;- \"https://github.com/AIML4OS/WP9_S1_PL_TOURISM/raw/refs/heads/main/sspcloud/WP9_S1_Tourism_synt.rds\"\n\n# Temporary file\ntemp_file &lt;- tempfile(fileext = \".rds\")\n\n# Download data\ndownload.file(url, temp_file, mode = \"wb\")\n\n# Read RDS\ndata &lt;- readRDS(temp_file)\n\nCheck structure of the dataset\n\nhead(data) %&gt;% kable()\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nregon\nvoivodeship\ncounty\nmunicipality\nobject_type\nis_seasonal\nperiod_yyyymm\ntourists\nmonth_num\nactive_in_month\nyear\nmonth\n\n\n\n\nID1\n14\n14\n052\n11\n1\n201801\n70\n1\n1\n2018\n01\n\n\nID1\n14\n14\n052\n11\n1\n201802\n93\n2\n1\n2018\n02\n\n\nID1\n14\n14\n052\n11\n1\n201803\n180\n3\n1\n2018\n03\n\n\nID1\n14\n14\n052\n11\n1\n201804\n129\n4\n1\n2018\n04\n\n\nID1\n14\n14\n052\n11\n1\n201805\n268\n5\n1\n2018\n05\n\n\nID1\n14\n14\n052\n11\n1\n201806\n286\n6\n1\n2018\n06\n\n\n\n\n\nThese variables are interpreted as follows:\n\nregon - ID of accommodation establishment (original Polish name of ID but content is completely different)\nvoivodeship - administrative region code (closely corresponds to NUTS 2)\ncounty - administrative region code (former LAU 2)\nmunicipality - administrative region code (current LAU, former LAU 1)\nobject_type - recoded type of accommodation establishments, e.g. hotel, motel, etc.\nis_seasonal - 1 when operates through whole year, 2 - when operates in a part of a year (e.g. in a summer or in a winter season)\nperiod_yyyymm - text label of year and month of reporting (convenient for data ordering)\ntourists - number of tourists accommodated (variable of interest)\nmonth_num - number of month (1 for January)\nactive_in_month - 1 when establishment operated in a given month (there are many cases when establishment does not provide number of tourists but declares it was active)\nyear - year as integer\nmonth - text label of the month",
+    "crumbs": [
+      "Explanatory Data Analysis"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter1.html#packages",
+    "href": "chapters/chapter1.html#packages",
+    "title": "Explanatory Data Analysis",
+    "section": "",
+    "text": "library(dplyr)\nlibrary(knitr)",
+    "crumbs": [
+      "Explanatory Data Analysis"
+    ]
+  },
+  {
+    "objectID": "chapters/chapter1.html#dataset",
+    "href": "chapters/chapter1.html#dataset",
+    "title": "Explanatory Data Analysis",
+    "section": "",
+    "text": "Dataset is a synthetic version of the original dataset due to disclosure control. Synthetic version was generated with synthesizer package available on CRAN.\nFirst, we load the dataset.\n\nurl &lt;- \"https://github.com/AIML4OS/WP9_S1_PL_TOURISM/raw/refs/heads/main/sspcloud/WP9_S1_Tourism_synt.rds\"\n\n# Temporary file\ntemp_file &lt;- tempfile(fileext = \".rds\")\n\n# Download data\ndownload.file(url, temp_file, mode = \"wb\")\n\n# Read RDS\ndata &lt;- readRDS(temp_file)\n\nCheck structure of the dataset\n\nhead(data) %&gt;% kable()\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nregon\nvoivodeship\ncounty\nmunicipality\nobject_type\nis_seasonal\nperiod_yyyymm\ntourists\nmonth_num\nactive_in_month\nyear\nmonth\n\n\n\n\nID1\n14\n14\n052\n11\n1\n201801\n70\n1\n1\n2018\n01\n\n\nID1\n14\n14\n052\n11\n1\n201802\n93\n2\n1\n2018\n02\n\n\nID1\n14\n14\n052\n11\n1\n201803\n180\n3\n1\n2018\n03\n\n\nID1\n14\n14\n052\n11\n1\n201804\n129\n4\n1\n2018\n04\n\n\nID1\n14\n14\n052\n11\n1\n201805\n268\n5\n1\n2018\n05\n\n\nID1\n14\n14\n052\n11\n1\n201806\n286\n6\n1\n2018\n06\n\n\n\n\n\nThese variables are interpreted as follows:\n\nregon - ID of accommodation establishment (original Polish name of ID but content is completely different)\nvoivodeship - administrative region code (closely corresponds to NUTS 2)\ncounty - administrative region code (former LAU 2)\nmunicipality - administrative region code (current LAU, former LAU 1)\nobject_type - recoded type of accommodation establishments, e.g. hotel, motel, etc.\nis_seasonal - 1 when operates through whole year, 2 - when operates in a part of a year (e.g. in a summer or in a winter season)\nperiod_yyyymm - text label of year and month of reporting (convenient for data ordering)\ntourists - number of tourists accommodated (variable of interest)\nmonth_num - number of month (1 for January)\nactive_in_month - 1 when establishment operated in a given month (there are many cases when establishment does not provide number of tourists but declares it was active)\nyear - year as integer\nmonth - text label of the month",
+    "crumbs": [
+      "Explanatory Data Analysis"
     ]
   }
 ]

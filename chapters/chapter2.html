@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>chapter1 – Early Imputation Use Case</title>
+<title>chapter2 – Early Imputation Use Case</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -65,8 +65,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../chapters/chapter2.html" rel="next">
-<link href="../index.html" rel="prev">
+<link href="../chapters/chapter1.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
@@ -119,7 +118,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/chapter1.html">Explanatory Data Analysis</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/chapter2.html">Feature Engineering</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -153,13 +152,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/chapter1.html" class="sidebar-item-text sidebar-link active">
+  <a href="../chapters/chapter1.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Explanatory Data Analysis</span></a>
   </div>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../chapters/chapter2.html" class="sidebar-item-text sidebar-link">
+  <a href="../chapters/chapter2.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Feature Engineering</span></a>
   </div>
 </li>
@@ -173,14 +172,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#explanatory-data-analysis" id="toc-explanatory-data-analysis" class="nav-link active" data-scroll-target="#explanatory-data-analysis">Explanatory Data Analysis</a>
+  <li><a href="#feature-engineering" id="toc-feature-engineering" class="nav-link active" data-scroll-target="#feature-engineering">Feature Engineering</a>
   <ul class="collapse">
   <li><a href="#packages" id="toc-packages" class="nav-link" data-scroll-target="#packages">Packages</a></li>
-  <li><a href="#dataset" id="toc-dataset" class="nav-link" data-scroll-target="#dataset">Dataset</a></li>
   </ul></li>
-  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   </ul>
-<div class="toc-actions"><ul><li><a href="https://github.com/AIML4OS/WP9_S1_PL_TOURISM/edit/main/chapters/chapter1.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/AIML4OS/WP9_S1_PL_TOURISM/blob/main/chapters/chapter1.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/AIML4OS/WP9_S1_PL_TOURISM/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
+<div class="toc-actions"><ul><li><a href="https://github.com/AIML4OS/WP9_S1_PL_TOURISM/edit/main/chapters/chapter2.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/AIML4OS/WP9_S1_PL_TOURISM/blob/main/chapters/chapter2.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/AIML4OS/WP9_S1_PL_TOURISM/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
@@ -188,176 +185,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<section id="explanatory-data-analysis" class="level1">
-<h1>Explanatory Data Analysis</h1>
+<section id="feature-engineering" class="level1">
+<h1>Feature Engineering</h1>
+<p>Feature engineering is the process of transforming raw data into meaningful features that enhance the performance of machine learning models. In this chapter, the emphasis is put on feature creation and feature selection. Feature creation refers to deriving new variables using domain expertise or by detecting patterns within the data, while feature selection focuses on identifying and retaining the most relevant subset of features for analysis.</p>
 <section id="packages" class="level2">
 <h2 class="anchored" data-anchor-id="packages">Packages</h2>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-</section>
-<section id="dataset" class="level2">
-<h2 class="anchored" data-anchor-id="dataset">Dataset</h2>
-<p>Dataset is a synthetic version of the original dataset due to disclosure control. Synthetic version was generated with <code>synthesizer</code> package available on <a href="https://CRAN.R-project.org/package=synthesizer">CRAN</a>.</p>
-<p>First, we load the dataset.</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">"https://github.com/AIML4OS/WP9_S1_PL_TOURISM/raw/refs/heads/main/sspcloud/WP9_S1_Tourism_synt.rds"</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Temporary file</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>temp_file <span class="ot">&lt;-</span> <span class="fu">tempfile</span>(<span class="at">fileext =</span> <span class="st">".rds"</span>)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Download data</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(url, temp_file, <span class="at">mode =</span> <span class="st">"wb"</span>)</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Read RDS</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(temp_file)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<p>Check structure of the dataset</p>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data) <span class="sc">%&gt;%</span> <span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div class="cell-output-display">
-<table class="caption-top table table-sm table-striped small">
-<colgroup>
-<col style="width: 4%">
-<col style="width: 9%">
-<col style="width: 5%">
-<col style="width: 10%">
-<col style="width: 9%">
-<col style="width: 9%">
-<col style="width: 11%">
-<col style="width: 7%">
-<col style="width: 8%">
-<col style="width: 13%">
-<col style="width: 4%">
-<col style="width: 4%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">regon</th>
-<th style="text-align: left;">voivodeship</th>
-<th style="text-align: left;">county</th>
-<th style="text-align: left;">municipality</th>
-<th style="text-align: left;">object_type</th>
-<th style="text-align: right;">is_seasonal</th>
-<th style="text-align: left;">period_yyyymm</th>
-<th style="text-align: right;">tourists</th>
-<th style="text-align: right;">month_num</th>
-<th style="text-align: right;">active_in_month</th>
-<th style="text-align: left;">year</th>
-<th style="text-align: left;">month</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">ID1</td>
-<td style="text-align: left;">14</td>
-<td style="text-align: left;">14</td>
-<td style="text-align: left;">052</td>
-<td style="text-align: left;">11</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">201801</td>
-<td style="text-align: right;">70</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">2018</td>
-<td style="text-align: left;">01</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ID1</td>
-<td style="text-align: left;">14</td>
-<td style="text-align: left;">14</td>
-<td style="text-align: left;">052</td>
-<td style="text-align: left;">11</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">201802</td>
-<td style="text-align: right;">93</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">2018</td>
-<td style="text-align: left;">02</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ID1</td>
-<td style="text-align: left;">14</td>
-<td style="text-align: left;">14</td>
-<td style="text-align: left;">052</td>
-<td style="text-align: left;">11</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">201803</td>
-<td style="text-align: right;">180</td>
-<td style="text-align: right;">3</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">2018</td>
-<td style="text-align: left;">03</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ID1</td>
-<td style="text-align: left;">14</td>
-<td style="text-align: left;">14</td>
-<td style="text-align: left;">052</td>
-<td style="text-align: left;">11</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">201804</td>
-<td style="text-align: right;">129</td>
-<td style="text-align: right;">4</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">2018</td>
-<td style="text-align: left;">04</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">ID1</td>
-<td style="text-align: left;">14</td>
-<td style="text-align: left;">14</td>
-<td style="text-align: left;">052</td>
-<td style="text-align: left;">11</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">201805</td>
-<td style="text-align: right;">268</td>
-<td style="text-align: right;">5</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">2018</td>
-<td style="text-align: left;">05</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">ID1</td>
-<td style="text-align: left;">14</td>
-<td style="text-align: left;">14</td>
-<td style="text-align: left;">052</td>
-<td style="text-align: left;">11</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">201806</td>
-<td style="text-align: right;">286</td>
-<td style="text-align: right;">6</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">2018</td>
-<td style="text-align: left;">06</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p>These variables are interpreted as follows:</p>
-<ul>
-<li><code>regon</code> - ID of accommodation establishment (original Polish name of ID but content is completely different)</li>
-<li><code>voivodeship</code> - administrative region code (closely corresponds to NUTS 2)</li>
-<li><code>county</code> - administrative region code (former LAU 2)</li>
-<li><code>municipality</code> - administrative region code (current LAU, former LAU 1)</li>
-<li><code>object_type</code> - recoded type of accommodation establishments, e.g.&nbsp;hotel, motel, etc.</li>
-<li><code>is_seasonal</code> - <code>1</code> when operates through whole year, <code>2</code> - when operates in a part of a year (e.g.&nbsp;in a summer or in a winter season)</li>
-<li><code>period_yyyymm</code> - text label of year and month of reporting (convenient for data ordering)</li>
-<li><code>tourists</code> - number of tourists accommodated (variable of interest)</li>
-<li><code>month_num</code> - number of month (<code>1</code> for January)</li>
-<li><code>active_in_month</code> - <code>1</code> when establishment operated in a given month (there are many cases when establishment does not provide number of tourists but declares it was active)</li>
-<li><code>year</code> - year as integer</li>
-<li><code>month</code> - text label of the month</li>
-</ul>
-</section>
-</section>
-<section id="conclusion" class="level1">
-<h1>Conclusion</h1>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -763,14 +602,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../index.html" class="pagination-link" aria-label="Introduction">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Introduction</span>
+      <a href="../chapters/chapter1.html" class="pagination-link" aria-label="Explanatory Data Analysis">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Explanatory Data Analysis</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../chapters/chapter2.html" class="pagination-link" aria-label="Feature Engineering">
-        <span class="nav-page-text">Feature Engineering</span> <i class="bi bi-arrow-right-short"></i>
-      </a>
   </div>
 </nav>
 </div> <!-- /content -->
@@ -778,4 +614,4 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/AIML4OS/WP9_S1_PL_TOURISM/edit/main/chapters/chapter1.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/AIML4OS/WP9_S1_PL_TOURISM/blob/main/chapters/chapter1.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/AIML4OS/WP9_S1_PL_TOURISM/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/AIML4OS/WP9_S1_PL_TOURISM/edit/main/chapters/chapter2.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/AIML4OS/WP9_S1_PL_TOURISM/blob/main/chapters/chapter2.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/AIML4OS/WP9_S1_PL_TOURISM/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>
