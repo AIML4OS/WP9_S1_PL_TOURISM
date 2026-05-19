@@ -10,3 +10,14 @@ library(dplyr)
 library(knitr)
 ```
 
+## Preliminaries
+
+In this chapter we shall construct micro-level and mezo-evel variables with respect to time, spatial, and other dimensions. Optional data indicating the severity of restrictions during COVID will be included also. The following file contains monthly indicators of severity of COVID-19 restrictions.
+
+```{r}
+#| warning: false
+#| eval: false
+monthly_string=read.csv2("https://github.com/AIML4OS/WP9_S1_PL_TOURISM/raw/refs/heads/main/sspcloud/stringency_data.csv") #
+```
+
+Our data is already in long format, that is, every accommodation establishment is represented by several rows. Each row covers data for one month. 

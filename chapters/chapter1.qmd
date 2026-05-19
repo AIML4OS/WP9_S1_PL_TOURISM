@@ -4,8 +4,14 @@
 
 ```{r}
 #| warning: false
+#| message: false
 library(dplyr)
 library(knitr)
+library(ggplot2)
+library(lubridate)
+library(tidyverse)
+library(zoo)
+library(corrplot)
 ```
 
 ## Dataset
@@ -28,13 +34,6 @@ download.file(url, temp_file, mode = "wb")
 # Read RDS
 data <- readRDS(temp_file)
 ```
-
-```{r}
-#| echo: false
-#| eval: true
-data$seasonality=NULL
-```
-
 
 Check structure of the dataset
 
@@ -59,5 +58,257 @@ These variables are interpreted as follows:
 - `year` - year as integer
 - `month` - text label of the month
 
+Some additional variables will make furthere analysis more convinient
 
-# Conclusion
+
+```{r}
+#| echo: false
+#| eval: true
+data <- data %>%
+  mutate(
+    period_yyyymm = as.character(period_yyyymm),
+    period_date = ym(period_yyyymm),        # lub lubridate::ym()
+    year = as.integer(year),
+    month_num = as.integer(month_num),
+    month = sprintf("%02d", month_num),
+    seasonality=if_else(is_seasonal==1,'year-round','seasonal')
+  )
+```
+
+
+
+## Summary statistics
+
+```{r}
+#| warning: false
+stats_table <- data %>%
+  group_by(year, month, object_type) %>%
+  summarise(
+    min = min(tourists, na.rm = TRUE),
+    q1 = quantile(tourists, 0.25, na.rm = TRUE),
+    median = median(tourists, na.rm = TRUE),
+    mean = mean(tourists, na.rm = TRUE),
+    q3 = quantile(tourists, 0.75, na.rm = TRUE),
+    max = max(tourists, na.rm = TRUE),
+    na_count = sum(is.na(tourists)),
+    .groups = "drop"
+  )
+```
+
+
+
+Number of accommodation establishments, broken down into seasonal and year-round.
+
+```{r}
+#| warning: false
+objects_summary <- data %>%
+  group_by(year, month) %>%
+  summarise(
+    total_objects = n_distinct(regon),  # unique IDs
+    seasonal_objects = sum(seasonality == "seasonal", na.rm = TRUE),
+    year_round_objects = sum(seasonality == "year-round", na.rm = TRUE),
+    .groups = "drop"
+  )
+```
+
+Total number of tourists by accommodation establishments type.
+
+```{r}
+tourists_by_type <- data %>%
+  group_by(object_type) %>%
+  summarise(
+    total_tourists = sum(tourists, na.rm = TRUE),
+    .groups = "drop"
+  )
+```
+
+
+
+
+
+
+
+
+
+
+
+#hist
+```{r}
+library(scales)
+data %>% filter(tourists>0) %>% 
+ggplot(aes(x = tourists)) +
+  geom_histogram(bins = 80, fill = "#2C3E50", color = "white", alpha = 0.8) +
+  scale_x_continuous(trans = "log10", labels = label_comma()) +  
+  labs(
+    title = "Histogram of Tourists (Logarithmic Scale)",
+    x = "Number of Tourists (log10)",
+    y = "Count"
+  ) +
+  theme_minimal(base_size = 14)
+```
+
+
+
+Seasonality of total number of turists
+```{r}
+tot_month <- data %>%
+  group_by(period_date) %>%
+  summarise(total_tourists = sum(tourists, na.rm=TRUE))
+
+ggplot(tot_month, aes(x = period_date, y = total_tourists)) +
+  geom_line() +
+  labs(title = "Całkowita liczba turystów w czasie", x = "Miesiąc", y = "Liczba")
+```
+
+monthly_tourists <- data %>%
+  group_by(period_date) %>%
+  summarise(total_tourists = sum(tourists, na.rm = TRUE)) %>%
+  arrange(period_date) %>%
+  mutate(month_label = format(period_date, "%Y-%m"))
+
+ #Wykres słupkowy z wartościami nad słupkami
+sezo=ggplot(monthly_tourists, aes(x = month_label, y = total_tourists)) +
+  geom_col(fill = "#1f77b4") +  # zmienny kolor słupków
+  geom_text(aes(label = comma(total_tourists)),
+            hjust = -0.5, size = 3.5, fontface = "bold", angle = 90) +  # przesunięcie nad słupkiem
+  scale_y_continuous(labels = comma, expand = expansion(mult = c(0, 0.25))) + # więcej miejsca nad słupkami
+  labs(
+    title = "Monthly Tourist Volume",
+    x = "Month",
+    y = "Number of tourists"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    plot.title = element_text(size = 16)
+  )
+ggsave("Monthly Tourist Volume.png", plot = sezo, width = 10, height = 6, dpi = 300)
+
+
+season_plot <- data %>%
+  group_by(month_num) %>%
+  summarise(mean_t = mean(tourists, na.rm=TRUE),
+            sd_t = sd(tourists, na.rm=TRUE))
+
+ggplot(season_plot, aes(x = factor(month_num, levels = 1:12), y = mean_t)) +
+  geom_line(aes(group=1)) +   # trzeba dodać group=1, żeby linia nie "znikła"
+  geom_point() +
+  labs(title = "Średnia liczba turystów wg miesiąca (agregat)",
+       x = "Miesiąc", y = "Średnia") +
+  scale_x_discrete(labels = 1:12)
+
+
+
+
+# na typ obiektu
+fac=ggplot(data %>% filter(!is.na(tourists)), aes(x = object_type, y = tourists)) +
+  geom_boxplot() +
+  scale_y_log10() +
+  labs(title = "Distribution of tourists by type of facility")
+ggsave("Distribution of tourists by type of facility.png", plot = fac, width = 10, height = 6, dpi = 300)
+
+# trend 
+top_voiv <- data %>% 
+  count(voivodeship, sort = TRUE) %>% 
+  slice_head(n = 16) %>% 
+  pull(voivodeship)
+
+tre=ggplot(filter(data, voivodeship %in% top_voiv), aes(x = period_date, y = tourists, color = voivodeship, group = voivodeship)) +
+  stat_summary(geom="line", fun = "mean")
+ggsave("Average number of tourists over time in top 16 voivodeships_1.png", plot = tre, width = 10, height = 6, dpi = 300)
+
+tre2=ggplot(data %>% filter(voivodeship %in% top_voiv), 
+       aes(x = period_date, y = tourists, color = voivodeship, group = voivodeship)) +
+  stat_summary(geom = "line", fun = mean, size = 1) +
+  stat_summary(geom = "point", fun = mean, size = 2) +  # opcjonalnie, żeby widać punkty średnich
+  labs(
+    title = "Average number of tourists over time in top 16 voivodeships",
+    x = "Date",
+    y = "Average number of tourists",
+    color = "Voivodeship"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+ggsave("Average number of tourists over time in top 16 voivodeships_2.png", plot = tre2, width = 10, height = 6, dpi = 300)
+
+
+Mapy
+
+  
+library(ggplot2)
+library(sf)
+library(dplyr)
+library(RColorBrewer)
+library(gridExtra)
+
+# 0. Rozpakowanie pliku zip do folderu tymczasowego
+zip_file <- "wojewodztwa.zip"  # Twój plik zip
+temp_dir <- tempdir()           # tymczasowy folder
+unzip(zip_file, exdir = temp_dir)
+
+# 2. Znalezienie pliku .shp w rozpakowanym folderze
+shp_file <- list.files(temp_dir, pattern = "\\.shp$", full.names = TRUE)
+
+# 3. Wczytanie shapefile
+poland_map <- st_read(shp_file)
+
+
+# 4. Przygotowanie danych rocznych na województwo
+# Załóżmy, że kolumna 'voivodeship' to numery województw
+tur_year <- data %>%
+  mutate(year = substr(period_yyyymm, 1, 4)) %>%
+  group_by(voivodeship, year) %>%
+  summarise(tourists = sum(tourists, na.rm = TRUE), .groups = "drop")
+
+# 5. Zamiana numerów województw na nazwy (dopasuj do shapefile)
+voivodeship_names <- c(
+  "02"="Dolnośląskie", "04"="Kujawsko-Pomorskie", "06"="Lubelskie",
+  "08"="Lubuskie", "10"="Łódzkie", "12"="Małopolskie",
+  "14"="Mazowieckie", "16"="Opolskie", "18"="Podkarpackie",
+  "20"="Podlaskie", "22"="Pomorskie", "24"="Śląskie",
+  "26"="Świętokrzyskie", "28"="Warmińsko-Mazurskie", "30"="Wielkopolskie",
+  "32"="Zachodniopomorskie"
+)
+
+tur_year <- tur_year %>%
+  mutate(voivodeship_name = tolower(voivodeship_name))
+
+# 6. Funkcja do rysowania mapy dla pojedynczego roku
+draw_map <- function(df_year, rok){
+  map_df <- poland_map %>%
+    left_join(df_year, by = c("JPT_NAZWA_" = "voivodeship_name"))
+  ggplot(map_df) +
+    geom_sf(aes(fill = tourists), color = "white") +
+    scale_fill_gradientn(colors = brewer.pal(9, "Blues"),
+                         na.value = "grey90",
+                         labels = scales::comma) +
+    labs(title = paste("Year", rok), fill = "Number of tourists") +
+    theme_minimal()
+}
+
+# 7. Przygotowanie map dla lat 2018-2020
+map_2018 <- draw_map(filter(tur_year, year == "2018"), 2018)
+map_2019 <- draw_map(filter(tur_year, year == "2019"), 2019)
+map_2020 <- draw_map(filter(tur_year, year == "2020"), 2020)
+
+# 8. Wyświetlenie map obok siebie
+grid.arrange(map_2018, map_2019, map_2020, ncol = 3)
+
+png("maps_2018_2020_grid.png", width = 2000, height = 800, res = 150)
+grid.arrange(map_2018, map_2019, map_2020, ncol = 3)
+dev.off()
+
+# 2018
+png("map_2018.png", width = 800, height = 800, res = 150)
+print(map_2018)
+dev.off()
+
+# 2019
+png("map_2019.png", width = 800, height = 800, res = 150)
+print(map_2019)
+dev.off()
+
+# 2020
+png("map_2020.png", width = 800, height = 800, res = 150)
+print(map_2020)
+dev.off()

@@ -56,3 +56,4 @@ data/*
 **/data/*
 
 **/*.quarto_ipynb
+.positai
