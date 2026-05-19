@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.26">
+<meta name="generator" content="quarto-1.9.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>chapter1 – Early Imputation Use Case</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -69,15 +72,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../index.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-c30451789a0a2bcd5e941535c675cd30.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-84365199647afda7ec578bfe13ef3742.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -177,8 +179,22 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#packages" id="toc-packages" class="nav-link" data-scroll-target="#packages">Packages</a></li>
   <li><a href="#dataset" id="toc-dataset" class="nav-link" data-scroll-target="#dataset">Dataset</a></li>
+  <li><a href="#summary-statistics" id="toc-summary-statistics" class="nav-link" data-scroll-target="#summary-statistics">Summary statistics</a></li>
   </ul></li>
-  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
+  <li><a href="#na-typ-obiektu" id="toc-na-typ-obiektu" class="nav-link" data-scroll-target="#na-typ-obiektu">na typ obiektu</a></li>
+  <li><a href="#trend" id="toc-trend" class="nav-link" data-scroll-target="#trend">trend</a></li>
+  <li><a href="#rozpakowanie-pliku-zip-do-folderu-tymczasowego" id="toc-rozpakowanie-pliku-zip-do-folderu-tymczasowego" class="nav-link" data-scroll-target="#rozpakowanie-pliku-zip-do-folderu-tymczasowego">0. Rozpakowanie pliku zip do folderu tymczasowego</a></li>
+  <li><a href="#znalezienie-pliku-.shp-w-rozpakowanym-folderze" id="toc-znalezienie-pliku-.shp-w-rozpakowanym-folderze" class="nav-link" data-scroll-target="#znalezienie-pliku-.shp-w-rozpakowanym-folderze">2. Znalezienie pliku .shp w rozpakowanym folderze</a></li>
+  <li><a href="#wczytanie-shapefile" id="toc-wczytanie-shapefile" class="nav-link" data-scroll-target="#wczytanie-shapefile">3. Wczytanie shapefile</a></li>
+  <li><a href="#przygotowanie-danych-rocznych-na-województwo" id="toc-przygotowanie-danych-rocznych-na-województwo" class="nav-link" data-scroll-target="#przygotowanie-danych-rocznych-na-województwo">4. Przygotowanie danych rocznych na województwo</a></li>
+  <li><a href="#załóżmy-że-kolumna-voivodeship-to-numery-województw" id="toc-załóżmy-że-kolumna-voivodeship-to-numery-województw" class="nav-link" data-scroll-target="#załóżmy-że-kolumna-voivodeship-to-numery-województw">Załóżmy, że kolumna ‘voivodeship’ to numery województw</a></li>
+  <li><a href="#zamiana-numerów-województw-na-nazwy-dopasuj-do-shapefile" id="toc-zamiana-numerów-województw-na-nazwy-dopasuj-do-shapefile" class="nav-link" data-scroll-target="#zamiana-numerów-województw-na-nazwy-dopasuj-do-shapefile">5. Zamiana numerów województw na nazwy (dopasuj do shapefile)</a></li>
+  <li><a href="#funkcja-do-rysowania-mapy-dla-pojedynczego-roku" id="toc-funkcja-do-rysowania-mapy-dla-pojedynczego-roku" class="nav-link" data-scroll-target="#funkcja-do-rysowania-mapy-dla-pojedynczego-roku">6. Funkcja do rysowania mapy dla pojedynczego roku</a></li>
+  <li><a href="#przygotowanie-map-dla-lat-2018-2020" id="toc-przygotowanie-map-dla-lat-2018-2020" class="nav-link" data-scroll-target="#przygotowanie-map-dla-lat-2018-2020">7. Przygotowanie map dla lat 2018-2020</a></li>
+  <li><a href="#wyświetlenie-map-obok-siebie" id="toc-wyświetlenie-map-obok-siebie" class="nav-link" data-scroll-target="#wyświetlenie-map-obok-siebie">8. Wyświetlenie map obok siebie</a></li>
+  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section">2018</a></li>
+  <li><a href="#section-1" id="toc-section-1" class="nav-link" data-scroll-target="#section-1">2019</a></li>
+  <li><a href="#section-2" id="toc-section-2" class="nav-link" data-scroll-target="#section-2">2020</a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/AIML4OS/WP9_S1_PL_TOURISM/edit/main/chapters/chapter1.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/AIML4OS/WP9_S1_PL_TOURISM/blob/main/chapters/chapter1.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/AIML4OS/WP9_S1_PL_TOURISM/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
     </div>
@@ -194,7 +210,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="packages">Packages</h2>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(zoo)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(corrplot)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="dataset" class="level2">
@@ -202,7 +223,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Dataset is a synthetic version of the original dataset due to disclosure control. Synthetic version was generated with <code>synthesizer</code> package available on <a href="https://CRAN.R-project.org/package=synthesizer">CRAN</a>.</p>
 <p>First, we load the dataset.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">"https://github.com/AIML4OS/WP9_S1_PL_TOURISM/raw/refs/heads/main/sspcloud/WP9_S1_Tourism_synt.rds"</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>url <span class="ot">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/AIML4OS/WP9_S1_PL_TOURISM/main/sspcloud/WP9_S1_Tourism_synt.rds"</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Temporary file</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>temp_file <span class="ot">&lt;-</span> <span class="fu">tempfile</span>(<span class="at">fileext =</span> <span class="st">".rds"</span>)</span>
@@ -220,16 +241,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 4%">
-<col style="width: 9%">
-<col style="width: 5%">
-<col style="width: 10%">
-<col style="width: 9%">
-<col style="width: 9%">
-<col style="width: 11%">
-<col style="width: 7%">
 <col style="width: 8%">
-<col style="width: 13%">
-<col style="width: 4%">
+<col style="width: 5%">
+<col style="width: 9%">
+<col style="width: 8%">
+<col style="width: 8%">
+<col style="width: 10%">
+<col style="width: 6%">
+<col style="width: 7%">
+<col style="width: 11%">
+<col style="width: 8%">
+<col style="width: 3%">
 <col style="width: 4%">
 </colgroup>
 <thead>
@@ -244,6 +266,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <th style="text-align: right;">tourists</th>
 <th style="text-align: right;">month_num</th>
 <th style="text-align: right;">active_in_month</th>
+<th style="text-align: right;">seasonality</th>
 <th style="text-align: left;">year</th>
 <th style="text-align: left;">month</th>
 </tr>
@@ -260,6 +283,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">70</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
 <td style="text-align: left;">2018</td>
 <td style="text-align: left;">01</td>
 </tr>
@@ -273,6 +297,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">201802</td>
 <td style="text-align: right;">93</td>
 <td style="text-align: right;">2</td>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">2018</td>
 <td style="text-align: left;">02</td>
@@ -288,6 +313,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">180</td>
 <td style="text-align: right;">3</td>
 <td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
 <td style="text-align: left;">2018</td>
 <td style="text-align: left;">03</td>
 </tr>
@@ -301,6 +327,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">201804</td>
 <td style="text-align: right;">129</td>
 <td style="text-align: right;">4</td>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">2018</td>
 <td style="text-align: left;">04</td>
@@ -316,6 +343,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">268</td>
 <td style="text-align: right;">5</td>
 <td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
 <td style="text-align: left;">2018</td>
 <td style="text-align: left;">05</td>
 </tr>
@@ -329,6 +357,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">201806</td>
 <td style="text-align: right;">286</td>
 <td style="text-align: right;">6</td>
+<td style="text-align: right;">1</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">2018</td>
 <td style="text-align: left;">06</td>
@@ -352,10 +381,162 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><code>year</code> - year as integer</li>
 <li><code>month</code> - text label of the month</li>
 </ul>
+<p>Some additional variables will make furthere analysis more convinient</p>
+</section>
+<section id="summary-statistics" class="level2">
+<h2 class="anchored" data-anchor-id="summary-statistics">Summary statistics</h2>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>stats_table <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year, month, object_type) <span class="sc">%&gt;%</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">min =</span> <span class="fu">min</span>(tourists, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">q1 =</span> <span class="fu">quantile</span>(tourists, <span class="fl">0.25</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">median =</span> <span class="fu">median</span>(tourists, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean =</span> <span class="fu">mean</span>(tourists, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">q3 =</span> <span class="fu">quantile</span>(tourists, <span class="fl">0.75</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">max =</span> <span class="fu">max</span>(tourists, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">na_count =</span> <span class="fu">sum</span>(<span class="fu">is.na</span>(tourists)),</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Number of accommodation establishments, broken down into seasonal and year-round.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>objects_summary <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(year, month) <span class="sc">%&gt;%</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_objects =</span> <span class="fu">n_distinct</span>(regon),  <span class="co"># unique IDs</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">seasonal_objects =</span> <span class="fu">sum</span>(seasonality <span class="sc">==</span> <span class="st">"seasonal"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">year_round_objects =</span> <span class="fu">sum</span>(seasonality <span class="sc">==</span> <span class="st">"year-round"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Total number of tourists by accommodation establishments type.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>tourists_by_type <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(object_type) <span class="sc">%&gt;%</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">total_tourists =</span> <span class="fu">sum</span>(tourists, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>#hist</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'scales'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:purrr':
+
+    discard</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:readr':
+
+    col_factor</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(tourists<span class="sc">&gt;</span><span class="dv">0</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> tourists)) <span class="sc">+</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">80</span>, <span class="at">fill =</span> <span class="st">"#2C3E50"</span>, <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">trans =</span> <span class="st">"log10"</span>, <span class="at">labels =</span> <span class="fu">label_comma</span>()) <span class="sc">+</span>  </span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Histogram of Tourists (Logarithmic Scale)"</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Number of Tourists (log10)"</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Count"</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>(<span class="at">base_size =</span> <span class="dv">14</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="chapter1_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Seasonality of total number of turists</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>tot_month <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(period_date) <span class="sc">%&gt;%</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_tourists =</span> <span class="fu">sum</span>(tourists, <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(tot_month, <span class="fu">aes</span>(<span class="at">x =</span> period_date, <span class="at">y =</span> total_tourists)) <span class="sc">+</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>() <span class="sc">+</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Całkowita liczba turystów w czasie"</span>, <span class="at">x =</span> <span class="st">"Miesiąc"</span>, <span class="at">y =</span> <span class="st">"Liczba"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="chapter1_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>monthly_tourists &lt;- data %&gt;% group_by(period_date) %&gt;% summarise(total_tourists = sum(tourists, na.rm = TRUE)) %&gt;% arrange(period_date) %&gt;% mutate(month_label = format(period_date, “%Y-%m”))</p>
+<p>#Wykres słupkowy z wartościami nad słupkami sezo=ggplot(monthly_tourists, aes(x = month_label, y = total_tourists)) + geom_col(fill = “#1f77b4”) + # zmienny kolor słupków geom_text(aes(label = comma(total_tourists)), hjust = -0.5, size = 3.5, fontface = “bold”, angle = 90) + # przesunięcie nad słupkiem scale_y_continuous(labels = comma, expand = expansion(mult = c(0, 0.25))) + # więcej miejsca nad słupkami labs( title = “Monthly Tourist Volume”, x = “Month”, y = “Number of tourists” ) + theme_minimal(base_size = 14) + theme( axis.text.x = element_text(angle = 45, hjust = 1), plot.title = element_text(size = 16) ) ggsave(“Monthly Tourist Volume.png”, plot = sezo, width = 10, height = 6, dpi = 300)</p>
+<p>season_plot &lt;- data %&gt;% group_by(month_num) %&gt;% summarise(mean_t = mean(tourists, na.rm=TRUE), sd_t = sd(tourists, na.rm=TRUE))</p>
+<p>ggplot(season_plot, aes(x = factor(month_num, levels = 1:12), y = mean_t)) + geom_line(aes(group=1)) + # trzeba dodać group=1, żeby linia nie “znikła” geom_point() + labs(title = “Średnia liczba turystów wg miesiąca (agregat)”, x = “Miesiąc”, y = “Średnia”) + scale_x_discrete(labels = 1:12)</p>
 </section>
 </section>
-<section id="conclusion" class="level1">
-<h1>Conclusion</h1>
+<section id="na-typ-obiektu" class="level1">
+<h1>na typ obiektu</h1>
+<p>fac=ggplot(data %&gt;% filter(!is.na(tourists)), aes(x = object_type, y = tourists)) + geom_boxplot() + scale_y_log10() + labs(title = “Distribution of tourists by type of facility”) ggsave(“Distribution of tourists by type of facility.png”, plot = fac, width = 10, height = 6, dpi = 300)</p>
+</section>
+<section id="trend" class="level1">
+<h1>trend</h1>
+<p>top_voiv &lt;- data %&gt;% count(voivodeship, sort = TRUE) %&gt;% slice_head(n = 16) %&gt;% pull(voivodeship)</p>
+<p>tre=ggplot(filter(data, voivodeship %in% top_voiv), aes(x = period_date, y = tourists, color = voivodeship, group = voivodeship)) + stat_summary(geom=“line”, fun = “mean”) ggsave(“Average number of tourists over time in top 16 voivodeships_1.png”, plot = tre, width = 10, height = 6, dpi = 300)</p>
+<p>tre2=ggplot(data %&gt;% filter(voivodeship %in% top_voiv), aes(x = period_date, y = tourists, color = voivodeship, group = voivodeship)) + stat_summary(geom = “line”, fun = mean, size = 1) + stat_summary(geom = “point”, fun = mean, size = 2) + # opcjonalnie, żeby widać punkty średnich labs( title = “Average number of tourists over time in top 16 voivodeships”, x = “Date”, y = “Average number of tourists”, color = “Voivodeship” ) + theme_minimal(base_size = 14) + theme(axis.text.x = element_text(angle = 45, hjust = 1)) ggsave(“Average number of tourists over time in top 16 voivodeships_2.png”, plot = tre2, width = 10, height = 6, dpi = 300)</p>
+<p>Mapy</p>
+<p>library(ggplot2) library(sf) library(dplyr) library(RColorBrewer) library(gridExtra)</p>
+</section>
+<section id="rozpakowanie-pliku-zip-do-folderu-tymczasowego" class="level1">
+<h1>0. Rozpakowanie pliku zip do folderu tymczasowego</h1>
+<p>zip_file &lt;- “wojewodztwa.zip” # Twój plik zip temp_dir &lt;- tempdir() # tymczasowy folder unzip(zip_file, exdir = temp_dir)</p>
+</section>
+<section id="znalezienie-pliku-.shp-w-rozpakowanym-folderze" class="level1">
+<h1>2. Znalezienie pliku .shp w rozpakowanym folderze</h1>
+<p>shp_file &lt;- list.files(temp_dir, pattern = “\.shp$”, full.names = TRUE)</p>
+</section>
+<section id="wczytanie-shapefile" class="level1">
+<h1>3. Wczytanie shapefile</h1>
+<p>poland_map &lt;- st_read(shp_file)</p>
+</section>
+<section id="przygotowanie-danych-rocznych-na-województwo" class="level1">
+<h1>4. Przygotowanie danych rocznych na województwo</h1>
+</section>
+<section id="załóżmy-że-kolumna-voivodeship-to-numery-województw" class="level1">
+<h1>Załóżmy, że kolumna ‘voivodeship’ to numery województw</h1>
+<p>tur_year &lt;- data %&gt;% mutate(year = substr(period_yyyymm, 1, 4)) %&gt;% group_by(voivodeship, year) %&gt;% summarise(tourists = sum(tourists, na.rm = TRUE), .groups = “drop”)</p>
+</section>
+<section id="zamiana-numerów-województw-na-nazwy-dopasuj-do-shapefile" class="level1">
+<h1>5. Zamiana numerów województw na nazwy (dopasuj do shapefile)</h1>
+<p>voivodeship_names &lt;- c( “02”=“Dolnośląskie”, “04”=“Kujawsko-Pomorskie”, “06”=“Lubelskie”, “08”=“Lubuskie”, “10”=“Łódzkie”, “12”=“Małopolskie”, “14”=“Mazowieckie”, “16”=“Opolskie”, “18”=“Podkarpackie”, “20”=“Podlaskie”, “22”=“Pomorskie”, “24”=“Śląskie”, “26”=“Świętokrzyskie”, “28”=“Warmińsko-Mazurskie”, “30”=“Wielkopolskie”, “32”=“Zachodniopomorskie” )</p>
+<p>tur_year &lt;- tur_year %&gt;% mutate(voivodeship_name = tolower(voivodeship_name))</p>
+</section>
+<section id="funkcja-do-rysowania-mapy-dla-pojedynczego-roku" class="level1">
+<h1>6. Funkcja do rysowania mapy dla pojedynczego roku</h1>
+<p>draw_map &lt;- function(df_year, rok){ map_df &lt;- poland_map %&gt;% left_join(df_year, by = c(“JPT_NAZWA_” = “voivodeship_name”)) ggplot(map_df) + geom_sf(aes(fill = tourists), color = “white”) + scale_fill_gradientn(colors = brewer.pal(9, “Blues”), na.value = “grey90”, labels = scales::comma) + labs(title = paste(“Year”, rok), fill = “Number of tourists”) + theme_minimal() }</p>
+</section>
+<section id="przygotowanie-map-dla-lat-2018-2020" class="level1">
+<h1>7. Przygotowanie map dla lat 2018-2020</h1>
+<p>map_2018 &lt;- draw_map(filter(tur_year, year == “2018”), 2018) map_2019 &lt;- draw_map(filter(tur_year, year == “2019”), 2019) map_2020 &lt;- draw_map(filter(tur_year, year == “2020”), 2020)</p>
+</section>
+<section id="wyświetlenie-map-obok-siebie" class="level1">
+<h1>8. Wyświetlenie map obok siebie</h1>
+<p>grid.arrange(map_2018, map_2019, map_2020, ncol = 3)</p>
+<p>png(“maps_2018_2020_grid.png”, width = 2000, height = 800, res = 150) grid.arrange(map_2018, map_2019, map_2020, ncol = 3) dev.off()</p>
+</section>
+<section id="section" class="level1">
+<h1>2018</h1>
+<p>png(“map_2018.png”, width = 800, height = 800, res = 150) print(map_2018) dev.off()</p>
+</section>
+<section id="section-1" class="level1">
+<h1>2019</h1>
+<p>png(“map_2019.png”, width = 800, height = 800, res = 150) print(map_2019) dev.off()</p>
+</section>
+<section id="section-2" class="level1">
+<h1>2020</h1>
+<p>png(“map_2020.png”, width = 800, height = 800, res = 150) print(map_2020) dev.off()</p>
 
 
 </section>
