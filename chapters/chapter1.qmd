@@ -23,7 +23,7 @@ First, we load the dataset.
 ```{r}
 #| warning: false
 #| eval: true
-url <- "https://github.com/AIML4OS/WP9_S1_PL_TOURISM/raw/refs/heads/main/sspcloud/WP9_S1_Tourism_synt.rds"
+url <- "https://raw.githubusercontent.com/AIML4OS/WP9_S1_PL_TOURISM/main/sspcloud/WP9_S1_Tourism_synt.rds"
 
 # Temporary file
 temp_file <- tempfile(fileext = ".rds")
