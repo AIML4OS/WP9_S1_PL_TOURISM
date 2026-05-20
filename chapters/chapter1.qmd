@@ -223,6 +223,7 @@ We shall use an old-fashion shape file to create several spatial visualizations.
 
 ```{r} 
 #| warning: false
+#| message: false
 
 library(RColorBrewer)
 library(gridExtra)
