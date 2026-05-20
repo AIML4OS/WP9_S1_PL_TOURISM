@@ -231,7 +231,7 @@ library(sf)
 library(ggplot2)
 
 # URL to ZIP stored in your repo
-url <- 'https://github.com/AIML4OS/WP9_S1_PL_TOURISM/raw/refs/heads/main/sspcloud/voivodeships.shp'
+url <- 'https://github.com/AIML4OS/WP9_S1_PL_TOURISM/raw/refs/heads/main/sspcloud/voivodeships.zip'
 
 # download into temporary file
 zip_temp <- tempfile(fileext = ".zip")
