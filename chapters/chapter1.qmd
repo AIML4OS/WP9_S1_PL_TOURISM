@@ -100,7 +100,7 @@ Tukey's five number summary and mean of number of tourists.
 ```{r}
 #| warning: false
 stats_table <- data %>%
-  group_by(year, month, type_name) %>%
+  group_by(type_name) %>%
   summarise(
     min = min(tourists, na.rm = TRUE),
     q1 = quantile(tourists, 0.25, na.rm = TRUE),
@@ -110,7 +110,7 @@ stats_table <- data %>%
     max = max(tourists, na.rm = TRUE),
     na_count = sum(is.na(tourists)),
     .groups = "drop"
-  )
+  ) 
 stats_table %>% kable()
 ```
 
@@ -219,33 +219,47 @@ data %>% filter(voivodeship %in% top_voiv) %>%
 
 ## Maps and choropleths 
 
-```{.r}  
-library(ggplot2)
-library(sf)
-library(dplyr)
+We shall use an old-fashion shape file to create several spatial visualizations.
+
+```{r} 
+#| warning: false
+
 library(RColorBrewer)
 library(gridExtra)
+library(sf)
+library(ggplot2)
 
-# 0. Rozpakowanie pliku zip do folderu tymczasowego
-zip_file <- "wojewodztwa.zip"  # Twój plik zip
-temp_dir <- tempdir()           # tymczasowy folder
-unzip(zip_file, exdir = temp_dir)
+# URL to ZIP stored in your repo
+url <- 'https://github.com/AIML4OS/WP9_S1_PL_TOURISM/raw/refs/heads/main/sspcloud/voivodeships.shp'
 
-# 2. Znalezienie pliku .shp w rozpakowanym folderze
-shp_file <- list.files(temp_dir, pattern = "\\.shp$", full.names = TRUE)
+# download into temporary file
+zip_temp <- tempfile(fileext = ".zip")
+download.file(url, zip_temp, mode = "wb")
 
-# 3. Wczytanie shapefile
-poland_map <- st_read(shp_file)
+# unpack temporary file
+temp_dir <- tempdir()
+unzip(zip_temp, exdir = temp_dir)
+
+# find shape file
+shp_file <- list.files(temp_dir, pattern = "\\.shp$", full.names = TRUE, recursive = TRUE)
+
+# load
+poland_map <- st_read(shp_file[2])
+
 ```
 
-# 4. Przygotowanie danych rocznych na województwo
-# Załóżmy, że kolumna 'voivodeship' to numery województw
+First, we calculate some statistics.
+
+```{r} 
 tur_year <- data %>%
   mutate(year = substr(period_yyyymm, 1, 4)) %>%
   group_by(voivodeship, year) %>%
   summarise(tourists = sum(tourists, na.rm = TRUE), .groups = "drop")
+```
 
-# 5. Zamiana numerów województw na nazwy (dopasuj do shapefile)
+Prepare keys for merging.
+
+```{r} 
 voivodeship_names <- c(
   "02"="Dolnośląskie", "04"="Kujawsko-Pomorskie", "06"="Lubelskie",
   "08"="Lubuskie", "10"="Łódzkie", "12"="Małopolskie",
@@ -253,47 +267,25 @@ voivodeship_names <- c(
   "20"="Podlaskie", "22"="Pomorskie", "24"="Śląskie",
   "26"="Świętokrzyskie", "28"="Warmińsko-Mazurskie", "30"="Wielkopolskie",
   "32"="Zachodniopomorskie"
-)
+) %>% tolower()
 
 tur_year <- tur_year %>%
-  mutate(voivodeship_name = tolower(voivodeship_name))
+  mutate(voivodeship_name = voivodeship_names[voivodeship])
+```
 
-# 6. Funkcja do rysowania mapy dla pojedynczego roku
-draw_map <- function(df_year, rok){
+Time for choropleth.
+
+```{r} 
   map_df <- poland_map %>%
-    left_join(df_year, by = c("JPT_NAZWA_" = "voivodeship_name"))
+    left_join(filter(tur_year, year == "2019"), by = c("JPT_NAZWA_" = "voivodeship_name"))
   ggplot(map_df) +
-    geom_sf(aes(fill = tourists), color = "white") +
+    geom_sf(aes(fill = tourists/1000), color = "white") +
     scale_fill_gradientn(colors = brewer.pal(9, "Blues"),
-                         na.value = "grey90",
-                         labels = scales::comma) +
-    labs(title = paste("Year", rok), fill = "Number of tourists") +
+                        na.value = "grey90",
+                        labels = scales::comma) +
+    labs(title = paste("Year", "2019"), fill = "Tourists [ths.]") +
     theme_minimal()
-}
 
-# 7. Przygotowanie map dla lat 2018-2020
-map_2018 <- draw_map(filter(tur_year, year == "2018"), 2018)
-map_2019 <- draw_map(filter(tur_year, year == "2019"), 2019)
-map_2020 <- draw_map(filter(tur_year, year == "2020"), 2020)
+```
 
-# 8. Wyświetlenie map obok siebie
-grid.arrange(map_2018, map_2019, map_2020, ncol = 3)
-
-png("maps_2018_2020_grid.png", width = 2000, height = 800, res = 150)
-grid.arrange(map_2018, map_2019, map_2020, ncol = 3)
-dev.off()
-
-# 2018
-png("map_2018.png", width = 800, height = 800, res = 150)
-print(map_2018)
-dev.off()
-
-# 2019
-png("map_2019.png", width = 800, height = 800, res = 150)
-print(map_2019)
-dev.off()
-
-# 2020
-png("map_2020.png", width = 800, height = 800, res = 150)
-print(map_2020)
-dev.off()
+Most of tourist visit Małpolskie voivodeship, and then Mazowiecki voivodeship - capital region. Seaside region are also popular.
