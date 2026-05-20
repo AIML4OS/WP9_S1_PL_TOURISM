@@ -245,7 +245,7 @@ unzip(zip_temp, exdir = temp_dir)
 shp_file <- list.files(temp_dir, pattern = "\\.shp$", full.names = TRUE, recursive = TRUE)
 
 # load
-poland_map <- st_read(shp_file[2])
+poland_map <- st_read(shp_file)
 
 ```
 
