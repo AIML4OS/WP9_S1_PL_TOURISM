@@ -14,11 +14,11 @@ library(zoo)
 library(corrplot)
 ```
 
-## Tourismset
+## Dataset
 
-Tourismset is a synthetic version of the original Tourismset due to disclosure control. Synthetic version was generated with `synthesizer` package available on [CRAN](https://CRAN.R-project.org/package=synthesizer).
+Dataset is a synthetic version of the original dataset due to disclosure control. Synthetic version was generated with `synthesizer` package available on [CRAN](https://CRAN.R-project.org/package=synthesizer).
 
-First, we load the Tourismset.
+First, we load the dataset.
 
 ```{r}
 #| warning: false
@@ -35,7 +35,7 @@ download.file(url, temp_file, mode = "wb")
 Tourism <- readRDS(temp_file)
 ```
 
-Check structure of the Tourismset
+Check structure of the dataset
 
 ```{r}
 #| warning: false
