@@ -48,7 +48,6 @@ These variables are interpreted as follows:
   - `regon` - ID of accommodation establishment (original Polish name of ID but content is completely different)
 - `voivodeship` - administrative region code (closely corresponds to NUTS 2)
 - `county` - administrative region code (former LAU 2)
-- `municipality` - administrative region code (current LAU, former LAU 1)
 - `object_type` - recoded type of accommodation establishments, e.g. hotel, motel, etc.
 - `is_seasonal` - `1` when operates through whole year, `2` - when operates in a part of a year (e.g. in a summer or in a winter season)
 - `period_yyyymm` - text label of year and month of reporting (convenient for data ordering)

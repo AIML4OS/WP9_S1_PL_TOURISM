@@ -1,3 +1,10 @@
+---
+
+editor: 
+  markdown: 
+    wrap: 72
+---
+
 # Feature Engineering
 
 Feature engineering is the process of transforming raw data into meaningful features that enhance the performance of machine learning models. In this chapter, the emphasis is put on feature creation and feature selection. Feature creation refers to deriving new variables using domain expertise or by detecting patterns within the data, while feature selection focuses on identifying and retaining the most relevant subset of features for analysis.
@@ -12,12 +19,291 @@ library(knitr)
 
 ## Preliminaries
 
-In this chapter we shall construct micro-level and mezo-evel variables with respect to time, spatial, and other dimensions. Optional data indicating the severity of restrictions during COVID will be included also. The following file contains monthly indicators of severity of COVID-19 restrictions.
+In this chapter we shall construct micro-level and mezo-level variables with respect to time, spatial, and other dimensions. Optional data indicating the severity of restrictions during COVID will be included also.
+
+Our data is already in long format, that is, every accommodation establishment is represented by several rows and each row covers data for one month. Such format is convenient in terms of constructing new variables, especially statistics taking into account time dimension.
+
+## Feature construction 
+
+The model we aim to developed is general, that is, we do not aim to model a particular month, e.g. June, but to model variable $Y_t$ at time point $t$ based on previous monthly data  $Y_{t-1}$, $Y_{t-2}$ at points $t-1$, $t-2$, etc. To this end, lagged target variable need to be constructed. 
+Within feature construction stage, utilizing lagged target variable, NUTS identifiers, type of accommodation establishment, information about COVID-19 restriction, many variables may be constructed. For time window of 3, 6 and 12 months, several statistics shall be calculated, namely:
+
+1)  mean,
+
+2)  median,
+
+3)  the first quartile,
+
+4)  the third quartile,
+
+5)  sum, 
+
+with respect to NUTS identifiers, type of accommodation establishment. Also lags of order 1, 2 and 3 of target variable shall be included.
+
+
+### Auxiliary functions
+
+To make the process more transparent we break it down into several steps and each step is implemented with soem auxiliary function. The first function `ASSIGN_LAG`  creates a lag for a given column by one period. The assignment is based on the provided key variable. 
 
 ```{r}
 #| warning: false
-#| eval: false
-monthly_string=read.csv2("https://github.com/AIML4OS/WP9_S1_PL_TOURISM/raw/refs/heads/main/sspcloud/stringency_data.csv") #
+ASSIGN_LAG <- function(source_data, data_to_assign = "tourists", lag_n = 1) 
+{
+  
+  matching_cols <- c(
+    "regon",
+    "voivodeship",
+    "county",
+    "object_type",
+    "is_seasonal"
+  )
+  
+  stopifnot(data_to_assign %in% names(source_data))
+  
+  source_data %>%
+    mutate(
+      month = str_pad(month, 2, pad = "0"),
+      .period_sort = if ("period_yyyymm" %in% names(.)) {
+        as.integer(period_yyyymm)
+      } else {
+        as.integer(paste0(year, month))
+      }
+    ) %>%
+    arrange(
+      across(all_of(matching_cols)),
+      .period_sort
+    ) %>%
+    group_by(across(all_of(matching_cols))) %>%
+    mutate(
+      !!paste0(data_to_assign, "_minus", lag_n) :=
+        dplyr::lag(.data[[data_to_assign]], lag_n)
+    ) %>%
+    ungroup() %>%
+    select(-.period_sort)
+}
 ```
 
-Our data is already in long format, that is, every accommodation establishment is represented by several rows. Each row covers data for one month. 
+
+Based on that, the function `ASSIGN_MULTIPLE_LAGS` automatically creates multiple backward lags (the number of periods is determined by `lags`). 
+
+```{r}
+#| warning: false
+
+ASSIGN_MULTIPLE_LAGS <- function(source_data, data_to_assign = "tourists", lags = 1:3) 
+{
+  result <- source_data
+  for (lag_n in lags) 
+    {
+    result <- ASSIGN_LAG(result, data_to_assign = data_to_assign, lag_n = lag_n)
+    }
+  result
+}
+```
+
+The following functions will generate statistics based on lagged variables.
+
+```{r}
+#| warning: false
+
+add_rolling_windows <- function(data,
+                                variable = "tourists",
+                                windows = c(3, 6, 12),
+                                stats = c("mean", "median"),
+                                group_by_cols = c("voivodeship", "county", "object_type"))
+{
+  
+  stat_funs <- list(
+    mean   = function(x) mean(x, na.rm = TRUE),
+    median = function(x) median(x, na.rm = TRUE),
+    q25    = function(x) quantile(x, 0.25, na.rm = TRUE),
+    q75    = function(x) quantile(x, 0.75, na.rm = TRUE),
+    sum    = function(x) sum(x, na.rm = TRUE)
+  )
+  
+  if (!all(stats %in% names(stat_funs))) {
+    stop("Some requested statistics are not defined in 'stat_funs'")
+  }
+  
+  data %>%
+    group_by(across(all_of(group_by_cols))) %>%
+    group_modify(~ {
+      
+      df <- .x %>% arrange(year, month)
+      
+      lagged_var <- dplyr::lag(df[[variable]])
+      
+      for (stat_name in stats) {
+        for (w in windows) {
+          
+          col_name <- paste0(
+            stat_name, "_win_", w, "_by_",
+            paste(group_by_cols, collapse = "_")
+          )
+          
+          df[[col_name]] <- zoo::rollapply(
+            lagged_var,                 # <-- używamy opóźnionej zmiennej
+            width = w,
+            FUN = stat_funs[[stat_name]],
+            align = "right",
+            partial = TRUE,
+            fill = NA
+          )
+        }
+      }
+      
+      df
+    }) %>%
+    ungroup()
+}
+
+
+# Adding the share within the county and the voivodeship
+
+calculate_share <- function(data, variable = "tourists", windows = c(3, 6, 12),
+                            group_share = c("county", "voivodeship")) 
+{
+  
+  # unique identifier 
+  data <- data %>%
+    mutate(county_uniq = paste0(voivodeship, "_", county))
+  
+  result <- data
+  
+  for (grp in group_share) {
+    
+    # if calculating share relative to county, use county_uniq
+    if (grp == "county") {
+      group_var <- "county_uniq"
+    } else {
+      group_var <- grp
+    }
+    
+    for (w in windows) {
+      
+      col_name <- paste0("share_", w, "mo_vs_", grp)
+      
+      result <- result %>%
+        group_by(across(all_of(group_var))) %>%
+        arrange(year, month, .by_group = TRUE) %>%
+        mutate(
+          tmp_sum = zoo::rollapply(
+            .data[[variable]],
+            width = w,
+            FUN = sum,
+            align = "right",
+            partial = TRUE,
+            fill = NA
+          )
+        ) %>%
+        ungroup() %>%
+        mutate(!!col_name := .data[[variable]] / tmp_sum) %>%
+        select(-tmp_sum)
+    }
+  }
+  
+  result %>% select(-county_uniq)
+}
+```
+
+EDA revealed that COVID-19 pandemic had an extreme impact on tourism in 2020 in Autumn, Winter and early Spring, and mediocre impact during Summer. Additional variable indicating COVID-19 restrictions will serve to model pandemic and preserve data continuum.
+
+```{r}
+data <- data %>% mutate(
+  Pandemia = case_when(
+    year < 2020 ~ 0,
+    year == 2020 & month == 1  ~ 0,
+    year == 2020 & month == 2  ~ 0,
+    year == 2020 & month == 3  ~ 0.6,
+    year == 2020 & month == 4  ~ 1.0,
+    year == 2020 & month == 5  ~ 1.0,
+    year == 2020 & month == 6  ~ 0.8,
+    year == 2020 & month == 7  ~ 0.6,
+    year == 2020 & month == 8  ~ 0.5,
+    year == 2020 & month == 9  ~ 0.5,
+    year == 2020 & month == 10 ~ 0.7,
+    year == 2020 & month == 11 ~ 0.9,
+    year == 2020 & month == 12 ~ 0.9,
+    year == 2021 & month == 1  ~ 1.0,
+    year == 2021 & month == 2  ~ 1.0,
+    year == 2021 & month == 3  ~ 1.0,
+    year == 2021 & month == 4  ~ 1.0,
+    year == 2021 & month == 5  ~ 0.8,
+    year == 2021 & month == 6  ~ 0.7,
+    year == 2021 & month == 7  ~ 0.5,
+    year == 2021 & month == 8  ~ 0.4,
+    year == 2021 & month == 9  ~ 0.3,
+    year == 2021 & month == 10 ~ 0.2,
+    year == 2021 & month == 11 ~ 0.2,
+    year == 2021 & month == 12 ~ 0.3,
+    TRUE ~ 0
+  )
+)
+```
+
+### Feature construction in action
+
+It is time to execute all function developed for feature construction. First, generate lagged target variable
+
+```{r}
+#| warning: false
+data <- ASSIGN_MULTIPLE_LAGS(data, data_to_assign = "tourists", lags = 1:3)
+```
+
+Rolling means for specific windows and groups
+
+```{r}
+data <- add_rolling_windows(
+  data = data,
+  variable = "tourists",
+  windows = c(3, 6, 12),
+  stats = c("mean"),
+  group_by_cols = c("regon", "object_type")
+)
+```
+
+Rolling means, medians, and quartiles for object_type
+
+```{r}
+data <- add_rolling_windows(
+  data = data,
+  variable = "tourists",
+  windows = c(3, 6, 12),
+  stats = c("mean", "median", "q25", "q75"),
+  group_by_cols = "object_type"
+)
+```
+
+Rolling stats for multiple grouping variables
+
+```{r}
+data <- add_rolling_windows(
+  data = data,
+  variable = "tourists",
+  windows = c(3, 6, 12),
+  stats = c("mean", "median", "q25", "q75"),
+  group_by_cols = c("voivodeship", "county", "object_type")
+)
+```
+
+Rolling sums for regional totals
+
+```{r}
+data <- add_rolling_windows(
+  data = data,
+  variable = "tourists",
+  windows = c(3, 6, 12),
+  stats = c("sum"),
+  group_by_cols = c("regon", "voivodeship", "county")
+)
+```
+
+ Share of tourists per hotel relative to county or voivodeship
+ 
+```{r}
+data <- calculate_share(
+  data = data,
+  variable = "tourists",
+  windows = c(3, 6, 12),
+  group_share = c("county", "voivodeship")
+)
+```
