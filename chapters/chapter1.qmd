@@ -32,7 +32,7 @@ temp_file <- tempfile(fileext = ".rds")
 download.file(url, temp_file, mode = "wb")
 
 # Read RDS
-data <- readRDS(temp_file)
+Data <- readRDS(temp_file)
 ```
 
 Check structure of the dataset
@@ -40,7 +40,7 @@ Check structure of the dataset
 ```{r}
 #| warning: false
 #| eval: true
-head(data) %>% kable()
+head(Data) %>% kable()
 ```
 
 These variables are interpreted as follows:
@@ -62,7 +62,7 @@ Some additional variables will make further analysis more convenient.
 ```{r}
 #| echo: false
 #| eval: true
-data <- data %>%
+Data <- Data %>%
   mutate(
     period_yyyymm = as.character(period_yyyymm),
     period_date = ym(period_yyyymm),        # lub lubridate::ym()
@@ -98,7 +98,7 @@ Tukey's five number summary and mean of number of tourists.
 
 ```{r}
 #| warning: false
-stats_table <- data %>%
+stats_table <- Data %>%
   group_by(type_name) %>%
   summarise(
     min = min(tourists, na.rm = TRUE),
@@ -119,7 +119,7 @@ Number of accommodation establishments, broken down into seasonal and year-round
 
 ```{r}
 #| warning: false
-objects_summary <- data %>%
+objects_summary <- Data %>%
   group_by(voivodeship,seasonality) %>%
   summarise(
     Number_of_establishments = n_distinct(regon),
@@ -135,7 +135,7 @@ objects_summary %>% kable()
 Total number of tourists by accommodation establishments type.
 
 ```{r}
-tourists_by_type <- data %>%
+tourists_by_type <- Data %>%
   group_by(type_name) %>%
   summarise(
     tourists_total = sum(tourists, na.rm = TRUE),
@@ -160,7 +160,7 @@ In this section we explore our data through several plots. First, we start with 
 
 ```{r}
 library(scales)
-data %>% filter(tourists>0) %>% 
+Data %>% filter(tourists>0) %>% 
   ggplot(aes(x = tourists)) +
   geom_histogram(bins = 80, fill = "#2C3E50", color = "white", alpha = 0.8) +
   scale_x_continuous(trans = "log10", labels = label_comma()) +  
@@ -177,7 +177,7 @@ It turns out that the distribution of monthly number of tourist is close to log-
 The following plot reveals trend and seasonality of total number of tourists and pandemic effect.
 
 ```{r}
-tot_month <- data %>%
+tot_month <- Data %>%
   group_by(period_date) %>%
   summarise(total_tourists = sum(tourists, na.rm=TRUE))
 
@@ -195,12 +195,12 @@ Autumn and winter season during pandemic resulted in large decrease. Summer peri
 
 ```{r}
 #| warning: false
-top_voiv <- data %>%
+top_voiv <- Data %>%
   count(voivodeship, sort = TRUE) %>%
   slice_head(n = 16) %>%
   pull(voivodeship)
 
-data %>% filter(voivodeship %in% top_voiv) %>% 
+Data %>% filter(voivodeship %in% top_voiv) %>% 
   ggplot(aes(x = period_date, y = tourists, color = voivodeship, group = voivodeship)) +
   stat_summary(geom = "line", fun = mean, size = 1) +
   stat_summary(geom = "point", fun = mean, size = 2) +  
@@ -251,7 +251,7 @@ poland_map <- st_read(shp_file)
 First, we calculate some statistics.
 
 ```{r} 
-tur_year <- data %>%
+tur_year <- Data %>%
   mutate(year = substr(period_yyyymm, 1, 4)) %>%
   group_by(voivodeship, year) %>%
   summarise(tourists = sum(tourists, na.rm = TRUE), .groups = "drop")

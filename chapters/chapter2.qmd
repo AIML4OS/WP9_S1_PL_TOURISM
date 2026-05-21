@@ -47,7 +47,7 @@ To make the process more transparent we break it down into several steps and eac
 
 ```{r}
 #| warning: false
-ASSIGN_LAG <- function(source_data, data_to_assign = "tourists", lag_n = 1) 
+ASSIGN_LAG <- function(source_Data, data_to_assign = "tourists", lag_n = 1) 
 {
   
   matching_cols <- c(
@@ -105,7 +105,7 @@ The following functions will generate statistics based on lagged variables.
 ```{r}
 #| warning: false
 
-add_rolling_windows <- function(data,
+add_rolling_windows <- function(Data,
                                 variable = "tourists",
                                 windows = c(3, 6, 12),
                                 stats = c("mean", "median"),
@@ -124,7 +124,7 @@ add_rolling_windows <- function(data,
     stop("Some requested statistics are not defined in 'stat_funs'")
   }
   
-  data %>%
+  Data %>%
     group_by(across(all_of(group_by_cols))) %>%
     group_modify(~ {
       
@@ -159,12 +159,12 @@ add_rolling_windows <- function(data,
 
 # Adding the share within the county and the voivodeship
 
-calculate_share <- function(data, variable = "tourists", windows = c(3, 6, 12),
+calculate_share <- function(Data, variable = "tourists", windows = c(3, 6, 12),
                             group_share = c("county", "voivodeship")) 
 {
   
   # unique identifier 
-  data <- data %>%
+  Data <- Data %>%
     mutate(county_uniq = paste0(voivodeship, "_", county))
   
   result <- data
@@ -208,7 +208,7 @@ calculate_share <- function(data, variable = "tourists", windows = c(3, 6, 12),
 EDA revealed that COVID-19 pandemic had an extreme impact on tourism in 2020 in Autumn, Winter and early Spring, and mediocre impact during Summer. Additional variable indicating COVID-19 restrictions will serve to model pandemic and preserve data continuum.
 
 ```{r}
-data <- data %>% mutate(
+Data <- Data %>% mutate(
   Pandemic = case_when(
     year == '2020' & month_num == 1  ~ 0,
     year == "2020" & month_num == 2  ~ 0,
@@ -245,14 +245,14 @@ It is time to execute all function developed for feature construction. First, ge
 
 ```{r}
 #| warning: false
-data <- ASSIGN_MULTIPLE_LAGS(data, data_to_assign = "tourists", lags = 1:3)
+Data <- ASSIGN_MULTIPLE_LAGS(Data, data_to_assign = "tourists", lags = 1:3)
 ```
 
 Rolling means for specific windows and groups
 
 ```{r}
-data <- add_rolling_windows(
-  data = data,
+Data <- add_rolling_windows(
+  Data = Data,
   variable = "tourists",
   windows = c(3, 6, 12),
   stats = c("mean"),
@@ -263,8 +263,8 @@ data <- add_rolling_windows(
 Rolling means, medians, and quartiles for object_type
 
 ```{r}
-data <- add_rolling_windows(
-  data = data,
+Data <- add_rolling_windows(
+  Data = Data,
   variable = "tourists",
   windows = c(3, 6, 12),
   stats = c("mean", "median", "q25", "q75"),
@@ -275,8 +275,8 @@ data <- add_rolling_windows(
 Rolling stats for multiple grouping variables
 
 ```{r}
-data <- add_rolling_windows(
-  data = data,
+Data <- add_rolling_windows(
+  Data = Data,
   variable = "tourists",
   windows = c(3, 6, 12),
   stats = c("mean", "median", "q25", "q75"),
@@ -287,8 +287,8 @@ data <- add_rolling_windows(
 Rolling sums for regional totals
 
 ```{r}
-data <- add_rolling_windows(
-  data = data,
+Data <- add_rolling_windows(
+  Data = Data,
   variable = "tourists",
   windows = c(3, 6, 12),
   stats = c("sum"),
@@ -299,8 +299,8 @@ data <- add_rolling_windows(
  Share of tourists per hotel relative to county or voivodeship
  
 ```{r}
-data <- calculate_share(
-  data = data,
+Data <- calculate_share(
+  Data = Data,
   variable = "tourists",
   windows = c(3, 6, 12),
   group_share = c("county", "voivodeship")
