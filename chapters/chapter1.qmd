@@ -1,4 +1,4 @@
-# Explanatory Data Analysis
+# Explanatory Tourism Analysis
 
 ## Packages
 
@@ -14,11 +14,11 @@ library(zoo)
 library(corrplot)
 ```
 
-## Dataset
+## Tourismset
 
-Dataset is a synthetic version of the original dataset due to disclosure control. Synthetic version was generated with `synthesizer` package available on [CRAN](https://CRAN.R-project.org/package=synthesizer).
+Tourismset is a synthetic version of the original Tourismset due to disclosure control. Synthetic version was generated with `synthesizer` package available on [CRAN](https://CRAN.R-project.org/package=synthesizer).
 
-First, we load the dataset.
+First, we load the Tourismset.
 
 ```{r}
 #| warning: false
@@ -28,19 +28,19 @@ url <- "https://raw.githubusercontent.com/AIML4OS/WP9_S1_PL_TOURISM/main/sspclou
 # Temporary file
 temp_file <- tempfile(fileext = ".rds")
 
-# Download data
+# Download Tourism
 download.file(url, temp_file, mode = "wb")
 
 # Read RDS
-Data <- readRDS(temp_file)
+Tourism <- readRDS(temp_file)
 ```
 
-Check structure of the dataset
+Check structure of the Tourismset
 
 ```{r}
 #| warning: false
 #| eval: true
-head(Data) %>% kable()
+head(Tourism) %>% kable()
 ```
 
 These variables are interpreted as follows:
@@ -50,7 +50,7 @@ These variables are interpreted as follows:
 - `county` - administrative region code (former LAU 2)
 - `object_type` - recoded type of accommodation establishments, e.g. hotel, motel, etc.
 - `is_seasonal` - `1` when operates through whole year, `2` - when operates in a part of a year (e.g. in a summer or in a winter season)
-- `period_yyyymm` - text label of year and month of reporting (convenient for data ordering)
+- `period_yyyymm` - text label of year and month of reporting (convenient for Tourism ordering)
 - `tourists` - number of tourists accommodated (variable of interest)
 - `month_num` - number of month (`1` for January)
 - `active_in_month` - `1` when establishment operated in a given month (there are many cases when establishment does not provide number of tourists but declares it was active)
@@ -62,7 +62,7 @@ Some additional variables will make further analysis more convenient.
 ```{r}
 #| echo: false
 #| eval: true
-Data <- Data %>%
+Tourism <- Tourism %>%
   mutate(
     period_yyyymm = as.character(period_yyyymm),
     period_date = ym(period_yyyymm),        # lub lubridate::ym()
@@ -98,7 +98,7 @@ Tukey's five number summary and mean of number of tourists.
 
 ```{r}
 #| warning: false
-stats_table <- Data %>%
+stats_table <- Tourism %>%
   group_by(type_name) %>%
   summarise(
     min = min(tourists, na.rm = TRUE),
@@ -119,7 +119,7 @@ Number of accommodation establishments, broken down into seasonal and year-round
 
 ```{r}
 #| warning: false
-objects_summary <- Data %>%
+objects_summary <- Tourism %>%
   group_by(voivodeship,seasonality) %>%
   summarise(
     Number_of_establishments = n_distinct(regon),
@@ -135,7 +135,7 @@ objects_summary %>% kable()
 Total number of tourists by accommodation establishments type.
 
 ```{r}
-tourists_by_type <- Data %>%
+tourists_by_type <- Tourism %>%
   group_by(type_name) %>%
   summarise(
     tourists_total = sum(tourists, na.rm = TRUE),
@@ -156,11 +156,11 @@ tourists_by_type %>% kable()
 
 ## Plots
 
-In this section we explore our data through several plots. First, we start with histogram but on log scale.
+In this section we explore our Tourism through several plots. First, we start with histogram but on log scale.
 
 ```{r}
 library(scales)
-Data %>% filter(tourists>0) %>% 
+Tourism %>% filter(tourists>0) %>% 
   ggplot(aes(x = tourists)) +
   geom_histogram(bins = 80, fill = "#2C3E50", color = "white", alpha = 0.8) +
   scale_x_continuous(trans = "log10", labels = label_comma()) +  
@@ -177,7 +177,7 @@ It turns out that the distribution of monthly number of tourist is close to log-
 The following plot reveals trend and seasonality of total number of tourists and pandemic effect.
 
 ```{r}
-tot_month <- Data %>%
+tot_month <- Tourism %>%
   group_by(period_date) %>%
   summarise(total_tourists = sum(tourists, na.rm=TRUE))
 
@@ -195,12 +195,12 @@ Autumn and winter season during pandemic resulted in large decrease. Summer peri
 
 ```{r}
 #| warning: false
-top_voiv <- Data %>%
+top_voiv <- Tourism %>%
   count(voivodeship, sort = TRUE) %>%
   slice_head(n = 16) %>%
   pull(voivodeship)
 
-Data %>% filter(voivodeship %in% top_voiv) %>% 
+Tourism %>% filter(voivodeship %in% top_voiv) %>% 
   ggplot(aes(x = period_date, y = tourists, color = voivodeship, group = voivodeship)) +
   stat_summary(geom = "line", fun = mean, size = 1) +
   stat_summary(geom = "point", fun = mean, size = 2) +  
@@ -251,7 +251,7 @@ poland_map <- st_read(shp_file)
 First, we calculate some statistics.
 
 ```{r} 
-tur_year <- Data %>%
+tur_year <- Tourism %>%
   mutate(year = substr(period_yyyymm, 1, 4)) %>%
   group_by(voivodeship, year) %>%
   summarise(tourists = sum(tourists, na.rm = TRUE), .groups = "drop")
