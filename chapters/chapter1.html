@@ -175,7 +175,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#explanatory-data-analysis" id="toc-explanatory-data-analysis" class="nav-link active" data-scroll-target="#explanatory-data-analysis">Explanatory Data Analysis</a>
+  <li><a href="#explanatory-tourism-analysis" id="toc-explanatory-tourism-analysis" class="nav-link active" data-scroll-target="#explanatory-tourism-analysis">Explanatory Tourism Analysis</a>
   <ul class="collapse">
   <li><a href="#packages" id="toc-packages" class="nav-link" data-scroll-target="#packages">Packages</a></li>
   <li><a href="#dataset" id="toc-dataset" class="nav-link" data-scroll-target="#dataset">Dataset</a></li>
@@ -192,8 +192,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<section id="explanatory-data-analysis" class="level1">
-<h1>Explanatory Data Analysis</h1>
+<section id="explanatory-tourism-analysis" class="level1">
+<h1>Explanatory Tourism Analysis</h1>
 <section id="packages" class="level2">
 <h2 class="anchored" data-anchor-id="packages">Packages</h2>
 <div class="cell">
@@ -216,30 +216,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Temporary file</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>temp_file <span class="ot">&lt;-</span> <span class="fu">tempfile</span>(<span class="at">fileext =</span> <span class="st">".rds"</span>)</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Download data</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Download Tourism</span></span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="fu">download.file</span>(url, temp_file, <span class="at">mode =</span> <span class="st">"wb"</span>)</span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Read RDS</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(temp_file)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>Tourism <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(temp_file)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Check structure of the dataset</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data) <span class="sc">%&gt;%</span> <span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(Tourism) <span class="sc">%&gt;%</span> <span class="fu">kable</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
 <col style="width: 4%">
-<col style="width: 8%">
+<col style="width: 9%">
 <col style="width: 5%">
 <col style="width: 9%">
-<col style="width: 8%">
-<col style="width: 8%">
-<col style="width: 10%">
-<col style="width: 6%">
-<col style="width: 7%">
+<col style="width: 9%">
 <col style="width: 11%">
+<col style="width: 7%">
 <col style="width: 8%">
-<col style="width: 3%">
+<col style="width: 13%">
+<col style="width: 9%">
+<col style="width: 4%">
 <col style="width: 4%">
 </colgroup>
 <thead>
@@ -247,7 +246,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <th style="text-align: left;">regon</th>
 <th style="text-align: left;">voivodeship</th>
 <th style="text-align: left;">county</th>
-<th style="text-align: left;">municipality</th>
 <th style="text-align: left;">object_type</th>
 <th style="text-align: right;">is_seasonal</th>
 <th style="text-align: left;">period_yyyymm</th>
@@ -264,7 +262,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">ID1</td>
 <td style="text-align: left;">14</td>
 <td style="text-align: left;">14</td>
-<td style="text-align: left;">052</td>
 <td style="text-align: left;">11</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">201801</td>
@@ -279,7 +276,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">ID1</td>
 <td style="text-align: left;">14</td>
 <td style="text-align: left;">14</td>
-<td style="text-align: left;">052</td>
 <td style="text-align: left;">11</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">201802</td>
@@ -294,7 +290,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">ID1</td>
 <td style="text-align: left;">14</td>
 <td style="text-align: left;">14</td>
-<td style="text-align: left;">052</td>
 <td style="text-align: left;">11</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">201803</td>
@@ -309,7 +304,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">ID1</td>
 <td style="text-align: left;">14</td>
 <td style="text-align: left;">14</td>
-<td style="text-align: left;">052</td>
 <td style="text-align: left;">11</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">201804</td>
@@ -324,7 +318,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">ID1</td>
 <td style="text-align: left;">14</td>
 <td style="text-align: left;">14</td>
-<td style="text-align: left;">052</td>
 <td style="text-align: left;">11</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">201805</td>
@@ -339,7 +332,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: left;">ID1</td>
 <td style="text-align: left;">14</td>
 <td style="text-align: left;">14</td>
-<td style="text-align: left;">052</td>
 <td style="text-align: left;">11</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">201806</td>
@@ -359,10 +351,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><code>regon</code> - ID of accommodation establishment (original Polish name of ID but content is completely different)</li>
 <li><code>voivodeship</code> - administrative region code (closely corresponds to NUTS 2)</li>
 <li><code>county</code> - administrative region code (former LAU 2)</li>
-<li><code>municipality</code> - administrative region code (current LAU, former LAU 1)</li>
 <li><code>object_type</code> - recoded type of accommodation establishments, e.g.&nbsp;hotel, motel, etc.</li>
 <li><code>is_seasonal</code> - <code>1</code> when operates through whole year, <code>2</code> - when operates in a part of a year (e.g.&nbsp;in a summer or in a winter season)</li>
-<li><code>period_yyyymm</code> - text label of year and month of reporting (convenient for data ordering)</li>
+<li><code>period_yyyymm</code> - text label of year and month of reporting (convenient for Tourism ordering)</li>
 <li><code>tourists</code> - number of tourists accommodated (variable of interest)</li>
 <li><code>month_num</code> - number of month (<code>1</code> for January)</li>
 <li><code>active_in_month</code> - <code>1</code> when establishment operated in a given month (there are many cases when establishment does not provide number of tourists but declares it was active)</li>
@@ -375,7 +366,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="summary-statistics">Summary statistics</h2>
 <p>Tukey’s five number summary and mean of number of tourists.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>stats_table <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>stats_table <span class="ot">&lt;-</span> Tourism <span class="sc">%&gt;%</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type_name) <span class="sc">%&gt;%</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">min =</span> <span class="fu">min</span>(tourists, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
@@ -619,7 +610,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Number of accommodation establishments, broken down into seasonal and year-round.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>objects_summary <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>objects_summary <span class="ot">&lt;-</span> Tourism <span class="sc">%&gt;%</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(voivodeship,seasonality) <span class="sc">%&gt;%</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Number_of_establishments =</span> <span class="fu">n_distinct</span>(regon),</span>
@@ -760,7 +751,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Total number of tourists by accommodation establishments type.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>tourists_by_type <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>tourists_by_type <span class="ot">&lt;-</span> Tourism <span class="sc">%&gt;%</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type_name) <span class="sc">%&gt;%</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">tourists_total =</span> <span class="fu">sum</span>(tourists, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
@@ -886,7 +877,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="plots" class="level2">
 <h2 class="anchored" data-anchor-id="plots">Plots</h2>
-<p>In this section we explore our data through several plots. First, we start with histogram but on log scale.</p>
+<p>In this section we explore our Tourism through several plots. First, we start with histogram but on log scale.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
@@ -903,7 +894,7 @@ Attaching package: 'scales'</code></pre>
 
     col_factor</code></pre>
 </div>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(tourists<span class="sc">&gt;</span><span class="dv">0</span>) <span class="sc">%&gt;%</span> </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>Tourism <span class="sc">%&gt;%</span> <span class="fu">filter</span>(tourists<span class="sc">&gt;</span><span class="dv">0</span>) <span class="sc">%&gt;%</span> </span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> tourists)) <span class="sc">+</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins =</span> <span class="dv">80</span>, <span class="at">fill =</span> <span class="st">"#2C3E50"</span>, <span class="at">color =</span> <span class="st">"white"</span>, <span class="at">alpha =</span> <span class="fl">0.8</span>) <span class="sc">+</span></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">trans =</span> <span class="st">"log10"</span>, <span class="at">labels =</span> <span class="fu">label_comma</span>()) <span class="sc">+</span>  </span>
@@ -924,7 +915,7 @@ Attaching package: 'scales'</code></pre>
 <p>It turns out that the distribution of monthly number of tourist is close to log-normal.</p>
 <p>The following plot reveals trend and seasonality of total number of tourists and pandemic effect.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>tot_month <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>tot_month <span class="ot">&lt;-</span> Tourism <span class="sc">%&gt;%</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(period_date) <span class="sc">%&gt;%</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">total_tourists =</span> <span class="fu">sum</span>(tourists, <span class="at">na.rm=</span><span class="cn">TRUE</span>))</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -945,12 +936,12 @@ Attaching package: 'scales'</code></pre>
 </div>
 <p>Autumn and winter season during pandemic resulted in large decrease. Summer period was without severe restrictions and the number of tourists increased but not to pre-pandemic level. The pandemic situation has a heterogeneous effect in regional breakdown (voivodeships).</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>top_voiv <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>top_voiv <span class="ot">&lt;-</span> Tourism <span class="sc">%&gt;%</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(voivodeship, <span class="at">sort =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_head</span>(<span class="at">n =</span> <span class="dv">16</span>) <span class="sc">%&gt;%</span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pull</span>(voivodeship)</span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>data <span class="sc">%&gt;%</span> <span class="fu">filter</span>(voivodeship <span class="sc">%in%</span> top_voiv) <span class="sc">%&gt;%</span> </span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>Tourism <span class="sc">%&gt;%</span> <span class="fu">filter</span>(voivodeship <span class="sc">%in%</span> top_voiv) <span class="sc">%&gt;%</span> </span>
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> period_date, <span class="at">y =</span> tourists, <span class="at">color =</span> voivodeship, <span class="at">group =</span> voivodeship)) <span class="sc">+</span></span>
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">geom =</span> <span class="st">"line"</span>, <span class="at">fun =</span> mean, <span class="at">size =</span> <span class="dv">1</span>) <span class="sc">+</span></span>
 <span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">geom =</span> <span class="st">"point"</span>, <span class="at">fun =</span> mean, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span>  </span>
@@ -999,7 +990,7 @@ Attaching package: 'scales'</code></pre>
 <span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>poland_map <span class="ot">&lt;-</span> <span class="fu">st_read</span>(shp_file)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Reading layer `voivodeships' from data source 
-  `/tmp/RtmphW0cny/voivodeships/voivodeships.shp' using driver `ESRI Shapefile'
+  `/tmp/Rtmp9pjjFu/voivodeships/voivodeships.shp' using driver `ESRI Shapefile'
 Simple feature collection with 16 features and 36 fields
 Geometry type: MULTIPOLYGON
 Dimension:     XY
@@ -1009,7 +1000,7 @@ Projected CRS: ETRF2000-PL / CS92</code></pre>
 </div>
 <p>First, we calculate some statistics.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>tur_year <span class="ot">&lt;-</span> data <span class="sc">%&gt;%</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>tur_year <span class="ot">&lt;-</span> Tourism <span class="sc">%&gt;%</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year =</span> <span class="fu">substr</span>(period_yyyymm, <span class="dv">1</span>, <span class="dv">4</span>)) <span class="sc">%&gt;%</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(voivodeship, year) <span class="sc">%&gt;%</span></span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">tourists =</span> <span class="fu">sum</span>(tourists, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">.groups =</span> <span class="st">"drop"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>

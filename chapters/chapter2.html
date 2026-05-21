@@ -107,6 +107,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../styles.css">
 </head>
@@ -178,6 +207,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#packages" id="toc-packages" class="nav-link" data-scroll-target="#packages">Packages</a></li>
   <li><a href="#preliminaries" id="toc-preliminaries" class="nav-link" data-scroll-target="#preliminaries">Preliminaries</a></li>
+  <li><a href="#feature-construction" id="toc-feature-construction" class="nav-link" data-scroll-target="#feature-construction">Feature construction</a>
+  <ul class="collapse">
+  <li><a href="#auxiliary-functions" id="toc-auxiliary-functions" class="nav-link" data-scroll-target="#auxiliary-functions">Auxiliary functions</a></li>
+  <li><a href="#feature-construction-in-action" id="toc-feature-construction-in-action" class="nav-link" data-scroll-target="#feature-construction-in-action">Feature construction in action</a></li>
+  </ul></li>
   </ul></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/AIML4OS/WP9_S1_PL_TOURISM/edit/main/chapters/chapter2.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li><li><a href="https://github.com/AIML4OS/WP9_S1_PL_TOURISM/blob/main/chapters/chapter2.qmd" class="toc-action"><i class="bi empty"></i>View source</a></li><li><a href="https://github.com/AIML4OS/WP9_S1_PL_TOURISM/issues/new" class="toc-action"><i class="bi empty"></i>Report an issue</a></li></ul></div></nav>
@@ -188,9 +222,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
+<hr>
+<p>editor: markdown: wrap: 72 —</p>
 <section id="feature-engineering" class="level1">
 <h1>Feature Engineering</h1>
-<p>Feature engineering is the process of transforming raw data into meaningful features that enhance the performance of machine learning models. In this chapter, the emphasis is put on feature creation and feature selection. Feature creation refers to deriving new variables using domain expertise or by detecting patterns within the data, while feature selection focuses on identifying and retaining the most relevant subset of features for analysis.</p>
+<p>Feature engineering is the process of transforming raw Tourism into meaningful features that enhance the performance of machine learning models. In this chapter, the emphasis is put on feature creation and feature selection. Feature creation refers to deriving new variables using domain expertise or by detecting patterns within the Tourism, while feature selection focuses on identifying and retaining the most relevant subset of features for analysis.</p>
 <section id="packages" class="level2">
 <h2 class="anchored" data-anchor-id="packages">Packages</h2>
 <div class="cell">
@@ -200,13 +236,250 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="preliminaries" class="level2">
 <h2 class="anchored" data-anchor-id="preliminaries">Preliminaries</h2>
-<p>In this chapter we shall construct micro-level and mezo-evel variables with respect to time, spatial, and other dimensions. Optional data indicating the severity of restrictions during COVID will be included also. The following file contains monthly indicators of severity of COVID-19 restrictions.</p>
+<p>In this chapter we shall construct micro-level and mezo-level variables with respect to time, spatial, and other dimensions. Optional Tourism indicating the severity of restrictions during COVID will be included also.</p>
+<p>Our Tourism is already in long format, that is, every accommodation establishment is represented by several rows and each row covers Tourism for one month. Such format is convenient in terms of constructing new variables, especially statistics taking into account time dimension.</p>
+</section>
+<section id="feature-construction" class="level2">
+<h2 class="anchored" data-anchor-id="feature-construction">Feature construction</h2>
+<p>The model we aim to developed is general, that is, we do not aim to model a particular month, e.g.&nbsp;June, but to model variable <span class="math inline">\(Y_t\)</span> at time point <span class="math inline">\(t\)</span> based on previous monthly Tourism <span class="math inline">\(Y_{t-1}\)</span>, <span class="math inline">\(Y_{t-2}\)</span> at points <span class="math inline">\(t-1\)</span>, <span class="math inline">\(t-2\)</span>, etc. To this end, lagged target variable need to be constructed. Within feature construction stage, utilizing lagged target variable, NUTS identifiers, type of accommodation establishment, information about COVID-19 restriction, many variables may be constructed. For time window of 3, 6 and 12 months, several statistics shall be calculated, namely:</p>
+<ol type="1">
+<li><p>mean,</p></li>
+<li><p>median,</p></li>
+<li><p>the first quartile,</p></li>
+<li><p>the third quartile,</p></li>
+<li><p>sum,</p></li>
+</ol>
+<p>with respect to NUTS identifiers, type of accommodation establishment. Also lags of order 1, 2 and 3 of target variable shall be included.</p>
+<section id="auxiliary-functions" class="level3">
+<h3 class="anchored" data-anchor-id="auxiliary-functions">Auxiliary functions</h3>
+<p>To make the process more transparent we break it down into several steps and each step is implemented with soem auxiliary function. The first function <code>ASSIGN_LAG</code> creates a lag for a given column by one period. The assignment is based on the provided key variable.</p>
 <div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>monthly_string<span class="ot">=</span><span class="fu">read.csv2</span>(<span class="st">"https://github.com/AIML4OS/WP9_S1_PL_TOURISM/raw/refs/heads/main/sspcloud/stringency_data.csv"</span>) <span class="co">#</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>ASSIGN_LAG <span class="ot">&lt;-</span> <span class="cf">function</span>(source_Tourism, <span class="at">Tourism_to_assign =</span> <span class="st">"tourists"</span>, <span class="at">lag_n =</span> <span class="dv">1</span>) </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  matching_cols <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"regon"</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">"voivodeship"</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">"county"</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"object_type"</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"is_seasonal"</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(Tourism_to_assign <span class="sc">%in%</span> <span class="fu">names</span>(source_Tourism))</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  source_Tourism <span class="sc">%&gt;%</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">month =</span> <span class="fu">str_pad</span>(month, <span class="dv">2</span>, <span class="at">pad =</span> <span class="st">"0"</span>),</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>      <span class="at">.period_sort =</span> <span class="cf">if</span> (<span class="st">"period_yyyymm"</span> <span class="sc">%in%</span> <span class="fu">names</span>(.)) {</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        <span class="fu">as.integer</span>(period_yyyymm)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> {</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>        <span class="fu">as.integer</span>(<span class="fu">paste0</span>(year, month))</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">arrange</span>(</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>      <span class="fu">across</span>(<span class="fu">all_of</span>(matching_cols)),</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>      .period_sort</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(<span class="fu">across</span>(<span class="fu">all_of</span>(matching_cols))) <span class="sc">%&gt;%</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>      <span class="sc">!!</span><span class="fu">paste0</span>(Tourism_to_assign, <span class="st">"_minus"</span>, lag_n) <span class="sc">:</span><span class="er">=</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>        dplyr<span class="sc">::</span><span class="fu">lag</span>(.data[[Tourism_to_assign]], lag_n)</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(<span class="sc">-</span>.period_sort)</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>Our data is already in long format, that is, every accommodation establishment is represented by several rows. Each row covers data for one month.</p>
+<p>Based on that, the function <code>ASSIGN_MULTIPLE_LAGS</code> automatically creates multiple backward lags (the number of periods is determined by <code>lags</code>).</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ASSIGN_MULTIPLE_LAGS <span class="ot">&lt;-</span> <span class="cf">function</span>(source_Tourism, <span class="at">Tourism_to_assign =</span> <span class="st">"tourists"</span>, <span class="at">lags =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>) </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  result <span class="ot">&lt;-</span> source_Tourism</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (lag_n <span class="cf">in</span> lags) </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    {</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    result <span class="ot">&lt;-</span> <span class="fu">ASSIGN_LAG</span>(result, <span class="at">Tourism_to_assign =</span> Tourism_to_assign, <span class="at">lag_n =</span> lag_n)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  result</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>The following functions will generate statistics based on lagged variables.</p>
+<div class="cell">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>add_rolling_windows <span class="ot">&lt;-</span> <span class="cf">function</span>(Tourism,</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                                <span class="at">variable =</span> <span class="st">"tourists"</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                                <span class="at">windows =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">6</span>, <span class="dv">12</span>),</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                                <span class="at">stats =</span> <span class="fu">c</span>(<span class="st">"mean"</span>, <span class="st">"median"</span>),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                                <span class="at">group_by_cols =</span> <span class="fu">c</span>(<span class="st">"voivodeship"</span>, <span class="st">"county"</span>, <span class="st">"object_type"</span>))</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  stat_funs <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean   =</span> <span class="cf">function</span>(x) <span class="fu">mean</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">median =</span> <span class="cf">function</span>(x) <span class="fu">median</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">q25    =</span> <span class="cf">function</span>(x) <span class="fu">quantile</span>(x, <span class="fl">0.25</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">q75    =</span> <span class="cf">function</span>(x) <span class="fu">quantile</span>(x, <span class="fl">0.75</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">sum    =</span> <span class="cf">function</span>(x) <span class="fu">sum</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">all</span>(stats <span class="sc">%in%</span> <span class="fu">names</span>(stat_funs))) {</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"Some requested statistics are not defined in 'stat_funs'"</span>)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  Tourism <span class="sc">%&gt;%</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(<span class="fu">across</span>(<span class="fu">all_of</span>(group_by_cols))) <span class="sc">%&gt;%</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_modify</span>(<span class="sc">~</span> {</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>      df <span class="ot">&lt;-</span> .x <span class="sc">%&gt;%</span> <span class="fu">arrange</span>(year, month)</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>      lagged_var <span class="ot">&lt;-</span> dplyr<span class="sc">::</span><span class="fu">lag</span>(df[[variable]])</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>      <span class="cf">for</span> (stat_name <span class="cf">in</span> stats) {</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> (w <span class="cf">in</span> windows) {</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>          </span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>          col_name <span class="ot">&lt;-</span> <span class="fu">paste0</span>(</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>            stat_name, <span class="st">"_win_"</span>, w, <span class="st">"_by_"</span>,</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>            <span class="fu">paste</span>(group_by_cols, <span class="at">collapse =</span> <span class="st">"_"</span>)</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>          )</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>          </span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>          df[[col_name]] <span class="ot">&lt;-</span> zoo<span class="sc">::</span><span class="fu">rollapply</span>(</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>            lagged_var,                 <span class="co"># &lt;-- używamy opóźnionej zmiennej</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>            <span class="at">width =</span> w,</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>            <span class="at">FUN =</span> stat_funs[[stat_name]],</span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>            <span class="at">align =</span> <span class="st">"right"</span>,</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>            <span class="at">partial =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>            <span class="at">fill =</span> <span class="cn">NA</span></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>          )</span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>      df</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>    }) <span class="sc">%&gt;%</span></span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>    <span class="fu">ungroup</span>()</span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a><span class="co"># Adding the share within the county and the voivodeship</span></span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>calculate_share <span class="ot">&lt;-</span> <span class="cf">function</span>(Tourism, <span class="at">variable =</span> <span class="st">"tourists"</span>, <span class="at">windows =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">6</span>, <span class="dv">12</span>),</span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>                            <span class="at">group_share =</span> <span class="fu">c</span>(<span class="st">"county"</span>, <span class="st">"voivodeship"</span>)) </span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>  <span class="co"># unique identifier </span></span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>  Tourism <span class="ot">&lt;-</span> Tourism <span class="sc">%&gt;%</span></span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(<span class="at">county_uniq =</span> <span class="fu">paste0</span>(voivodeship, <span class="st">"_"</span>, county))</span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>  result <span class="ot">&lt;-</span> Tourism</span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (grp <span class="cf">in</span> group_share) {</span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>    <span class="co"># if calculating share relative to county, use county_uniq</span></span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (grp <span class="sc">==</span> <span class="st">"county"</span>) {</span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>      group_var <span class="ot">&lt;-</span> <span class="st">"county_uniq"</span></span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>      group_var <span class="ot">&lt;-</span> grp</span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (w <span class="cf">in</span> windows) {</span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a>      col_name <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="st">"share_"</span>, w, <span class="st">"mo_vs_"</span>, grp)</span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a>      result <span class="ot">&lt;-</span> result <span class="sc">%&gt;%</span></span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a>        <span class="fu">group_by</span>(<span class="fu">across</span>(<span class="fu">all_of</span>(group_var))) <span class="sc">%&gt;%</span></span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a>        <span class="fu">arrange</span>(year, month, <span class="at">.by_group =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(</span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a>          <span class="at">tmp_sum =</span> zoo<span class="sc">::</span><span class="fu">rollapply</span>(</span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a>            .data[[variable]],</span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a>            <span class="at">width =</span> w,</span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a>            <span class="at">FUN =</span> sum,</span>
+<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a>            <span class="at">align =</span> <span class="st">"right"</span>,</span>
+<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a>            <span class="at">partial =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a>            <span class="at">fill =</span> <span class="cn">NA</span></span>
+<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a>          )</span>
+<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a>        ) <span class="sc">%&gt;%</span></span>
+<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a>        <span class="fu">ungroup</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="sc">!!</span><span class="at">col_name :=</span> .data[[variable]] <span class="sc">/</span> tmp_sum) <span class="sc">%&gt;%</span></span>
+<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a>        <span class="fu">select</span>(<span class="sc">-</span>tmp_sum)</span>
+<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a>  result <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">-</span>county_uniq)</span>
+<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>EDA revealed that COVID-19 pandemic had an extreme impact on tourism in 2020 in Autumn, Winter and early Spring, and mediocre impact during Summer. Additional variable indicating COVID-19 restrictions will serve to model pandemic and preserve Tourism continuum.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>Tourism <span class="ot">&lt;-</span> Tourism <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Pandemic =</span> <span class="fu">case_when</span>(</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    year <span class="sc">==</span> <span class="st">'2020'</span> <span class="sc">&amp;</span> month_num <span class="sc">==</span> <span class="dv">1</span>  <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    year <span class="sc">==</span> <span class="st">"2020"</span> <span class="sc">&amp;</span> month_num <span class="sc">==</span> <span class="dv">2</span>  <span class="sc">~</span> <span class="dv">0</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    year <span class="sc">==</span> <span class="st">"2020"</span> <span class="sc">&amp;</span> month_num <span class="sc">==</span> <span class="dv">3</span>  <span class="sc">~</span> <span class="fl">0.6</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    year <span class="sc">==</span> <span class="st">"2020"</span> <span class="sc">&amp;</span> month_num <span class="sc">==</span> <span class="dv">4</span>  <span class="sc">~</span> <span class="fl">1.0</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    year <span class="sc">==</span> <span class="st">"2020"</span> <span class="sc">&amp;</span> month_num <span class="sc">==</span> <span class="dv">5</span>  <span class="sc">~</span> <span class="fl">1.0</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    year <span class="sc">==</span> <span class="st">"2020"</span> <span class="sc">&amp;</span> month_num <span class="sc">==</span> <span class="dv">6</span>  <span class="sc">~</span> <span class="fl">0.8</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    year <span class="sc">==</span> <span class="st">"2020"</span> <span class="sc">&amp;</span> month_num <span class="sc">==</span> <span class="dv">7</span>  <span class="sc">~</span> <span class="fl">0.6</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    year <span class="sc">==</span> <span class="st">"2020"</span> <span class="sc">&amp;</span> month_num <span class="sc">==</span> <span class="dv">8</span>  <span class="sc">~</span> <span class="fl">0.5</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    year <span class="sc">==</span> <span class="st">"2020"</span> <span class="sc">&amp;</span> month_num <span class="sc">==</span> <span class="dv">9</span>  <span class="sc">~</span> <span class="fl">0.5</span>,</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    year <span class="sc">==</span> <span class="st">"2020"</span> <span class="sc">&amp;</span> month_num <span class="sc">==</span> <span class="dv">10</span> <span class="sc">~</span> <span class="fl">0.7</span>,</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    year <span class="sc">==</span> <span class="st">"2020"</span> <span class="sc">&amp;</span> month_num <span class="sc">==</span> <span class="dv">11</span> <span class="sc">~</span> <span class="fl">0.9</span>,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    year <span class="sc">==</span> <span class="st">"2020"</span> <span class="sc">&amp;</span> month_num <span class="sc">==</span> <span class="dv">12</span> <span class="sc">~</span> <span class="fl">0.9</span>,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    year <span class="sc">==</span> <span class="st">"2021"</span> <span class="sc">&amp;</span> month_num <span class="sc">==</span> <span class="dv">1</span>  <span class="sc">~</span> <span class="fl">1.0</span>,</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    year <span class="sc">==</span> <span class="st">"2021"</span> <span class="sc">&amp;</span> month_num <span class="sc">==</span> <span class="dv">2</span>  <span class="sc">~</span> <span class="fl">1.0</span>,</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    year <span class="sc">==</span> <span class="st">"2021"</span> <span class="sc">&amp;</span> month_num <span class="sc">==</span> <span class="dv">3</span>  <span class="sc">~</span> <span class="fl">1.0</span>,</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    year <span class="sc">==</span> <span class="st">"2021"</span> <span class="sc">&amp;</span> month_num <span class="sc">==</span> <span class="dv">4</span>  <span class="sc">~</span> <span class="fl">1.0</span>,</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    year <span class="sc">==</span> <span class="st">"2021"</span> <span class="sc">&amp;</span> month_num <span class="sc">==</span> <span class="dv">5</span>  <span class="sc">~</span> <span class="fl">0.8</span>,</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    year <span class="sc">==</span> <span class="st">"2021"</span> <span class="sc">&amp;</span> month_num <span class="sc">==</span> <span class="dv">6</span>  <span class="sc">~</span> <span class="fl">0.7</span>,</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    year <span class="sc">==</span> <span class="st">"2021"</span> <span class="sc">&amp;</span> month_num <span class="sc">==</span> <span class="dv">7</span>  <span class="sc">~</span> <span class="fl">0.5</span>,</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    year <span class="sc">==</span> <span class="st">"2021"</span> <span class="sc">&amp;</span> month_num <span class="sc">==</span> <span class="dv">8</span>  <span class="sc">~</span> <span class="fl">0.4</span>,</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    year <span class="sc">==</span> <span class="st">"2021"</span> <span class="sc">&amp;</span> month_num <span class="sc">==</span> <span class="dv">9</span>  <span class="sc">~</span> <span class="fl">0.3</span>,</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    year <span class="sc">==</span> <span class="st">"2021"</span> <span class="sc">&amp;</span> month_num <span class="sc">==</span> <span class="dv">10</span> <span class="sc">~</span> <span class="fl">0.2</span>,</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    year <span class="sc">==</span> <span class="st">"2021"</span> <span class="sc">&amp;</span> month_num <span class="sc">==</span> <span class="dv">11</span> <span class="sc">~</span> <span class="fl">0.2</span>,</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    year <span class="sc">==</span> <span class="st">"2021"</span> <span class="sc">&amp;</span> month_num <span class="sc">==</span> <span class="dv">12</span> <span class="sc">~</span> <span class="fl">0.3</span>,</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    <span class="cn">TRUE</span> <span class="sc">~</span> <span class="dv">0</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="feature-construction-in-action" class="level3">
+<h3 class="anchored" data-anchor-id="feature-construction-in-action">Feature construction in action</h3>
+<p>It is time to execute all function developed for feature construction. First, generate lagged target variable</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">#| warning: false</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>Tourism <span class="ot">&lt;-</span> <span class="fu">ASSIGN_MULTIPLE_LAGS</span>(Tourism, <span class="at">Tourism_to_assign =</span> <span class="st">"tourists"</span>, <span class="at">lags =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Rolling means for specific windows and groups</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>Tourism <span class="ot">&lt;-</span> <span class="fu">add_rolling_windows</span>(</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Tourism =</span> Tourism,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">variable =</span> <span class="st">"tourists"</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">windows =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">6</span>, <span class="dv">12</span>),</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">stats =</span> <span class="fu">c</span>(<span class="st">"mean"</span>),</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">group_by_cols =</span> <span class="fu">c</span>(<span class="st">"regon"</span>, <span class="st">"object_type"</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Rolling means, medians, and quartiles for object_type</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>Tourism <span class="ot">&lt;-</span> <span class="fu">add_rolling_windows</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Tourism =</span> Tourism,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">variable =</span> <span class="st">"tourists"</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">windows =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">6</span>, <span class="dv">12</span>),</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">stats =</span> <span class="fu">c</span>(<span class="st">"mean"</span>, <span class="st">"median"</span>, <span class="st">"q25"</span>, <span class="st">"q75"</span>),</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">group_by_cols =</span> <span class="st">"object_type"</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Rolling stats for multiple grouping variables</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>Tourism <span class="ot">&lt;-</span> <span class="fu">add_rolling_windows</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Tourism =</span> Tourism,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">variable =</span> <span class="st">"tourists"</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">windows =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">6</span>, <span class="dv">12</span>),</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">stats =</span> <span class="fu">c</span>(<span class="st">"mean"</span>, <span class="st">"median"</span>, <span class="st">"q25"</span>, <span class="st">"q75"</span>),</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">group_by_cols =</span> <span class="fu">c</span>(<span class="st">"voivodeship"</span>, <span class="st">"county"</span>, <span class="st">"object_type"</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Rolling sums for regional totals</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>Tourism <span class="ot">&lt;-</span> <span class="fu">add_rolling_windows</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Tourism =</span> Tourism,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">variable =</span> <span class="st">"tourists"</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">windows =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">6</span>, <span class="dv">12</span>),</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">stats =</span> <span class="fu">c</span>(<span class="st">"sum"</span>),</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">group_by_cols =</span> <span class="fu">c</span>(<span class="st">"regon"</span>, <span class="st">"voivodeship"</span>, <span class="st">"county"</span>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Share of tourists per hotel relative to county or voivodeship</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>Tourism <span class="ot">&lt;-</span> <span class="fu">calculate_share</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Tourism =</span> Tourism,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">variable =</span> <span class="st">"tourists"</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">windows =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">6</span>, <span class="dv">12</span>),</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">group_share =</span> <span class="fu">c</span>(<span class="st">"county"</span>, <span class="st">"voivodeship"</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 
+</section>
 </section>
 </section>
 
