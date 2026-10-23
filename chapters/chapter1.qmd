@@ -47,7 +47,6 @@ These variables are interpreted as follows:
   
   - `regon` - ID of accommodation establishment (original Polish name of ID but content is completely different)
 - `voivodeship` - administrative region code (closely corresponds to NUTS 2)
-- `county` - administrative region code (former LAU 2)
 - `object_type` - recoded type of accommodation establishments, e.g. hotel, motel, etc.
 - `is_seasonal` - `1` when operates through whole year, `2` - when operates in a part of a year (e.g. in a summer or in a winter season)
 - `period_yyyymm` - text label of year and month of reporting (convenient for Tourism ordering)
@@ -77,15 +76,6 @@ Tourism <- Tourism %>%
                                "20"="Podlaskie", "22"="Pomorskie", "24"="Śląskie",
                                "26"="Świętokrzyskie", "28"="Warmińsko-Mazurskie", "30"="Wielkopolskie",
                                "32"="Zachodniopomorskie"
-    ),
-    type_name = recode(object_type,
-                       '01'='hotel','03'='boarding house','02'='motel','04'='other hotel establishment',
-                       '13'='complex of tourist cottages','05'='excursion hostel','06'='shelter',
-                       '14'='camping site','07'='youth shelter','15'='tent camp sites',
-                       '08'='school youth shelter','16'='hostel','09'='holiday centre',
-                       '17'='health establishment','18'='room for guest','10'='holiday youth',
-                       '12'='creative arts centre','11'='training-recreational centre',
-                       '19'='agrotourism lodging','20'='other tourist accommodation establishment'
     )
   )
 ```
