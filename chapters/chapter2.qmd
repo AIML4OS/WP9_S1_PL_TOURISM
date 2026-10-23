@@ -71,7 +71,6 @@ ASSIGN_LAG <- function(source_Tourism, Tourism_to_assign = "tourists", lag_n = 1
   matching_cols <- c(
     "regon",
     "voivodeship",
-    "county",
     "object_type",
     "is_seasonal"
   )
@@ -127,7 +126,7 @@ add_rolling_windows <- function(Tourism,
                                 variable = "tourists",
                                 windows = c(3, 6, 12),
                                 stats = c("mean", "median"),
-                                group_by_cols = c("voivodeship", "county", "object_type"))
+                                group_by_cols = c("voivodeship", "object_type"))
 {
   
   stat_funs <- list(
@@ -175,26 +174,18 @@ add_rolling_windows <- function(Tourism,
 }
 
 
-# Adding the share within the county and the voivodeship
+# Adding the share within the voivodeship
 
 calculate_share <- function(Tourism, variable = "tourists", windows = c(3, 6, 12),
-                            group_share = c("county", "voivodeship")) 
+                            group_share = c("voivodeship")) 
 {
   
   # unique identifier 
-  Tourism <- Tourism %>%
-    mutate(county_uniq = paste0(voivodeship, "_", county))
-  
   result <- Tourism
   
   for (grp in group_share) {
     
-    # if calculating share relative to county, use county_uniq
-    if (grp == "county") {
-      group_var <- "county_uniq"
-    } else {
-      group_var <- grp
-    }
+    group_var <- grp
     
     for (w in windows) {
       
@@ -219,7 +210,6 @@ calculate_share <- function(Tourism, variable = "tourists", windows = c(3, 6, 12
     }
   }
   
-  result %>% select(-county_uniq)
 }
 ```
 
@@ -298,7 +288,7 @@ Tourism <- add_rolling_windows(
   variable = "tourists",
   windows = c(3, 6, 12),
   stats = c("mean", "median", "q25", "q75"),
-  group_by_cols = c("voivodeship", "county", "object_type")
+  group_by_cols = c("voivodeship", "object_type")
 )
 ```
 
@@ -310,17 +300,17 @@ Tourism <- add_rolling_windows(
   variable = "tourists",
   windows = c(3, 6, 12),
   stats = c("sum"),
-  group_by_cols = c("regon", "voivodeship", "county")
+  group_by_cols = c("regon", "voivodeship")
 )
 ```
 
- Share of tourists per hotel relative to county or voivodeship
+ Share of tourists per hotel relative to voivodeship
  
 ```{.r}
 Tourism <- calculate_share(
   Tourism = Tourism,
   variable = "tourists",
   windows = c(3, 6, 12),
-  group_share = c("county", "voivodeship")
+  group_share = c("voivodeship")
 )
 ```
