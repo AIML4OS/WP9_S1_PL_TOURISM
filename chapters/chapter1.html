@@ -345,7 +345,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ul>
 <li><code>regon</code> - ID of accommodation establishment (original Polish name of ID but content is completely different)</li>
 <li><code>voivodeship</code> - administrative region code (closely corresponds to NUTS 2)</li>
-<li><code>county</code> - administrative region code (former LAU 2)</li>
 <li><code>object_type</code> - recoded type of accommodation establishments, e.g.&nbsp;hotel, motel, etc.</li>
 <li><code>is_seasonal</code> - <code>1</code> when operates through whole year, <code>2</code> - when operates in a part of a year (e.g.&nbsp;in a summer or in a winter season)</li>
 <li><code>period_yyyymm</code> - text label of year and month of reporting (convenient for Tourism ordering)</li>
@@ -362,7 +361,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Tukey’s five number summary and mean of number of tourists.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>stats_table <span class="ot">&lt;-</span> Tourism <span class="sc">%&gt;%</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type_name) <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(object_type) <span class="sc">%&gt;%</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">min =</span> <span class="fu">min</span>(tourists, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">q1 =</span> <span class="fu">quantile</span>(tourists, <span class="fl">0.25</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
@@ -388,7 +387,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </colgroup>
 <thead>
 <tr class="header">
-<th style="text-align: left;">type_name</th>
+<th style="text-align: left;">object_type</th>
 <th style="text-align: right;">min</th>
 <th style="text-align: right;">q1</th>
 <th style="text-align: right;">median</th>
@@ -587,7 +586,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Total number of tourists by accommodation establishments type.</p>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>tourists_by_type <span class="ot">&lt;-</span> Tourism <span class="sc">%&gt;%</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(type_name) <span class="sc">%&gt;%</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(object_type) <span class="sc">%&gt;%</span></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">tourists_total =</span> <span class="fu">sum</span>(tourists, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">.groups =</span> <span class="st">"drop"</span></span>
@@ -599,7 +598,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <table class="caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
-<th style="text-align: left;">type_name</th>
+<th style="text-align: left;">object_type</th>
 <th style="text-align: right;">tourists_total</th>
 <th style="text-align: right;">share_pct</th>
 </tr>
@@ -745,7 +744,7 @@ Attaching package: 'scales'</code></pre>
 <span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>poland_map <span class="ot">&lt;-</span> <span class="fu">st_read</span>(shp_file)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Reading layer `voivodeships' from data source 
-  `/tmp/RtmpY4mV5T/voivodeships/voivodeships.shp' using driver `ESRI Shapefile'
+  `/tmp/RtmpEHAa9c/voivodeships/voivodeships.shp' using driver `ESRI Shapefile'
 Simple feature collection with 16 features and 36 fields
 Geometry type: MULTIPOLYGON
 Dimension:     XY
