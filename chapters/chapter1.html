@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.9.37">
+<meta name="generator" content="quarto-1.10.19">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -12,10 +12,13 @@
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
 */
-code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -76,10 +79,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-84365199647afda7ec578bfe13ef3742.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-24c09a13944ec7e1f31d2917b1251fc2.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -230,8 +233,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <colgroup>
 <col style="width: 4%">
 <col style="width: 9%">
-<col style="width: 5%">
-<col style="width: 9%">
+<col style="width: 16%">
 <col style="width: 9%">
 <col style="width: 11%">
 <col style="width: 7%">
@@ -245,7 +247,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="header">
 <th style="text-align: left;">regon</th>
 <th style="text-align: left;">voivodeship</th>
-<th style="text-align: left;">county</th>
 <th style="text-align: left;">object_type</th>
 <th style="text-align: right;">is_seasonal</th>
 <th style="text-align: left;">period_yyyymm</th>
@@ -261,8 +262,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="odd">
 <td style="text-align: left;">ID1</td>
 <td style="text-align: left;">14</td>
-<td style="text-align: left;">14</td>
-<td style="text-align: left;">11</td>
+<td style="text-align: left;">other_establishment</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">201801</td>
 <td style="text-align: right;">70</td>
@@ -275,8 +275,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="even">
 <td style="text-align: left;">ID1</td>
 <td style="text-align: left;">14</td>
-<td style="text-align: left;">14</td>
-<td style="text-align: left;">11</td>
+<td style="text-align: left;">other_establishment</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">201802</td>
 <td style="text-align: right;">93</td>
@@ -289,8 +288,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="odd">
 <td style="text-align: left;">ID1</td>
 <td style="text-align: left;">14</td>
-<td style="text-align: left;">14</td>
-<td style="text-align: left;">11</td>
+<td style="text-align: left;">other_establishment</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">201803</td>
 <td style="text-align: right;">180</td>
@@ -303,8 +301,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="even">
 <td style="text-align: left;">ID1</td>
 <td style="text-align: left;">14</td>
-<td style="text-align: left;">14</td>
-<td style="text-align: left;">11</td>
+<td style="text-align: left;">other_establishment</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">201804</td>
 <td style="text-align: right;">129</td>
@@ -317,8 +314,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="odd">
 <td style="text-align: left;">ID1</td>
 <td style="text-align: left;">14</td>
-<td style="text-align: left;">14</td>
-<td style="text-align: left;">11</td>
+<td style="text-align: left;">other_establishment</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">201805</td>
 <td style="text-align: right;">268</td>
@@ -331,8 +327,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="even">
 <td style="text-align: left;">ID1</td>
 <td style="text-align: left;">14</td>
-<td style="text-align: left;">14</td>
-<td style="text-align: left;">11</td>
+<td style="text-align: left;">other_establishment</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">201806</td>
 <td style="text-align: right;">286</td>
@@ -382,14 +377,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <colgroup>
-<col style="width: 45%">
-<col style="width: 4%">
-<col style="width: 4%">
-<col style="width: 7%">
-<col style="width: 10%">
-<col style="width: 7%">
-<col style="width: 10%">
+<col style="width: 36%">
+<col style="width: 5%">
+<col style="width: 5%">
 <col style="width: 9%">
+<col style="width: 12%">
+<col style="width: 5%">
+<col style="width: 12%">
+<col style="width: 12%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -405,204 +400,44 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">agrotourism lodging</td>
+<td style="text-align: left;">guest_rooms</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: right;">14</td>
-<td style="text-align: right;">56.91512</td>
-<td style="text-align: right;">38.00</td>
-<td style="text-align: right;">9790.647</td>
-<td style="text-align: right;">13192</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">boarding house</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">30</td>
-<td style="text-align: right;">84</td>
-<td style="text-align: right;">151.76908</td>
-<td style="text-align: right;">184.00</td>
-<td style="text-align: right;">9243.000</td>
-<td style="text-align: right;">6866</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">camping site</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">41</td>
-<td style="text-align: right;">142</td>
-<td style="text-align: right;">358.83780</td>
-<td style="text-align: right;">395.00</td>
-<td style="text-align: right;">11242.164</td>
-<td style="text-align: right;">4713</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">complex of tourist cottages</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">25</td>
-<td style="text-align: right;">72</td>
-<td style="text-align: right;">162.20259</td>
-<td style="text-align: right;">171.00</td>
-<td style="text-align: right;">7134.162</td>
-<td style="text-align: right;">17962</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">creative arts centre</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">34</td>
-<td style="text-align: right;">66</td>
-<td style="text-align: right;">110.18723</td>
-<td style="text-align: right;">131.00</td>
-<td style="text-align: right;">1297.000</td>
-<td style="text-align: right;">263</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">excursion hostel</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">32</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">42</td>
+<td style="text-align: right;">108.3867</td>
 <td style="text-align: right;">93</td>
-<td style="text-align: right;">200.14527</td>
-<td style="text-align: right;">236.00</td>
-<td style="text-align: right;">5126.000</td>
-<td style="text-align: right;">519</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">health establishment</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">85</td>
-<td style="text-align: right;">207</td>
-<td style="text-align: right;">328.02426</td>
-<td style="text-align: right;">398.00</td>
-<td style="text-align: right;">6994.819</td>
-<td style="text-align: right;">1360</td>
+<td style="text-align: right;">10823.27</td>
+<td style="text-align: right;">58829</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">holiday centre</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">40</td>
-<td style="text-align: right;">126</td>
-<td style="text-align: right;">253.97969</td>
-<td style="text-align: right;">309.00</td>
-<td style="text-align: right;">11532.434</td>
-<td style="text-align: right;">25833</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">holiday youth</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">47</td>
-<td style="text-align: right;">130</td>
-<td style="text-align: right;">242.27555</td>
-<td style="text-align: right;">305.00</td>
-<td style="text-align: right;">7653.335</td>
-<td style="text-align: right;">2339</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">hostel</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">58</td>
-<td style="text-align: right;">181</td>
-<td style="text-align: right;">340.17041</td>
-<td style="text-align: right;">435.00</td>
-<td style="text-align: right;">4430.306</td>
-<td style="text-align: right;">2694</td>
-</tr>
-<tr class="odd">
 <td style="text-align: left;">hotel</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">123</td>
 <td style="text-align: right;">314</td>
-<td style="text-align: right;">614.41728</td>
-<td style="text-align: right;">702.00</td>
-<td style="text-align: right;">15279.756</td>
+<td style="text-align: right;">614.4173</td>
+<td style="text-align: right;">702</td>
+<td style="text-align: right;">15279.76</td>
 <td style="text-align: right;">24319</td>
 </tr>
-<tr class="even">
-<td style="text-align: left;">motel</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">40</td>
-<td style="text-align: right;">116</td>
-<td style="text-align: right;">189.88071</td>
-<td style="text-align: right;">241.00</td>
-<td style="text-align: right;">6520.742</td>
-<td style="text-align: right;">1259</td>
-</tr>
 <tr class="odd">
-<td style="text-align: left;">other hotel establishment</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">38</td>
-<td style="text-align: right;">118</td>
-<td style="text-align: right;">234.65686</td>
-<td style="text-align: right;">282.00</td>
-<td style="text-align: right;">11532.425</td>
-<td style="text-align: right;">14554</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">other tourist accommodation establishment</td>
+<td style="text-align: left;">other_establishment</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">19</td>
-<td style="text-align: right;">64</td>
-<td style="text-align: right;">166.42556</td>
-<td style="text-align: right;">175.00</td>
-<td style="text-align: right;">10018.751</td>
-<td style="text-align: right;">9713</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">room for guest</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">15</td>
-<td style="text-align: right;">42</td>
-<td style="text-align: right;">108.38670</td>
-<td style="text-align: right;">93.00</td>
-<td style="text-align: right;">10823.274</td>
-<td style="text-align: right;">58829</td>
+<td style="text-align: right;">76</td>
+<td style="text-align: right;">199.9220</td>
+<td style="text-align: right;">234</td>
+<td style="text-align: right;">11532.43</td>
+<td style="text-align: right;">96253</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">school youth shelter</td>
+<td style="text-align: left;">other_hotel_establishment</td>
 <td style="text-align: right;">0</td>
-<td style="text-align: right;">9</td>
-<td style="text-align: right;">45</td>
-<td style="text-align: right;">121.65434</td>
-<td style="text-align: right;">136.00</td>
-<td style="text-align: right;">6026.627</td>
-<td style="text-align: right;">4865</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">shelter</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">44</td>
-<td style="text-align: right;">141</td>
-<td style="text-align: right;">249.12317</td>
-<td style="text-align: right;">299.00</td>
-<td style="text-align: right;">4025.256</td>
-<td style="text-align: right;">763</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">tent camp sites</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">27</td>
-<td style="text-align: right;">82</td>
-<td style="text-align: right;">221.88981</td>
-<td style="text-align: right;">244.00</td>
-<td style="text-align: right;">4853.647</td>
-<td style="text-align: right;">5083</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">training-recreational centre</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">45</td>
-<td style="text-align: right;">149</td>
-<td style="text-align: right;">265.91992</td>
-<td style="text-align: right;">352.00</td>
-<td style="text-align: right;">10822.874</td>
-<td style="text-align: right;">6348</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">youth shelter</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">23</td>
-<td style="text-align: right;">108</td>
-<td style="text-align: right;">190.27997</td>
-<td style="text-align: right;">266.75</td>
-<td style="text-align: right;">3510.002</td>
-<td style="text-align: right;">606</td>
+<td style="text-align: right;">35</td>
+<td style="text-align: right;">107</td>
+<td style="text-align: right;">210.7580</td>
+<td style="text-align: right;">250</td>
+<td style="text-align: right;">11532.43</td>
+<td style="text-align: right;">22679</td>
 </tr>
 </tbody>
 </table>
@@ -771,104 +606,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">agrotourism lodging</td>
-<td style="text-align: right;">1132155.6</td>
-<td style="text-align: right;">1.25</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">boarding house</td>
-<td style="text-align: right;">1870098.6</td>
-<td style="text-align: right;">2.06</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">camping site</td>
-<td style="text-align: right;">995774.9</td>
-<td style="text-align: right;">1.10</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">complex of tourist cottages</td>
-<td style="text-align: right;">1623648.0</td>
-<td style="text-align: right;">1.79</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">creative arts centre</td>
-<td style="text-align: right;">105889.9</td>
-<td style="text-align: right;">0.12</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">excursion hostel</td>
-<td style="text-align: right;">234770.4</td>
-<td style="text-align: right;">0.26</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">health establishment</td>
-<td style="text-align: right;">2140030.3</td>
-<td style="text-align: right;">2.36</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">holiday centre</td>
-<td style="text-align: right;">6138943.1</td>
-<td style="text-align: right;">6.78</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">holiday youth</td>
-<td style="text-align: right;">418894.4</td>
-<td style="text-align: right;">0.46</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">hostel</td>
-<td style="text-align: right;">1924684.2</td>
-<td style="text-align: right;">2.12</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">hotel</td>
-<td style="text-align: right;">52122860.8</td>
-<td style="text-align: right;">57.54</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">motel</td>
-<td style="text-align: right;">656417.6</td>
-<td style="text-align: right;">0.72</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">other hotel establishment</td>
-<td style="text-align: right;">7845517.4</td>
-<td style="text-align: right;">8.66</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">other tourist accommodation establishment</td>
-<td style="text-align: right;">2607389.3</td>
-<td style="text-align: right;">2.88</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">room for guest</td>
-<td style="text-align: right;">5618224.4</td>
+<td style="text-align: left;">guest_rooms</td>
+<td style="text-align: right;">5618224</td>
 <td style="text-align: right;">6.20</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">school youth shelter</td>
-<td style="text-align: right;">831507.4</td>
-<td style="text-align: right;">0.92</td>
+<td style="text-align: left;">hotel</td>
+<td style="text-align: right;">52122861</td>
+<td style="text-align: right;">57.54</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">shelter</td>
-<td style="text-align: right;">437709.4</td>
-<td style="text-align: right;">0.48</td>
+<td style="text-align: left;">other_establishment</td>
+<td style="text-align: right;">22471829</td>
+<td style="text-align: right;">24.81</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">tent camp sites</td>
-<td style="text-align: right;">509680.9</td>
-<td style="text-align: right;">0.56</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">training-recreational centre</td>
-<td style="text-align: right;">3184657.0</td>
-<td style="text-align: right;">3.52</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">youth shelter</td>
-<td style="text-align: right;">186093.8</td>
-<td style="text-align: right;">0.21</td>
+<td style="text-align: left;">other_hotel_establishment</td>
+<td style="text-align: right;">10372034</td>
+<td style="text-align: right;">11.45</td>
 </tr>
 </tbody>
 </table>
@@ -990,7 +745,7 @@ Attaching package: 'scales'</code></pre>
 <span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>poland_map <span class="ot">&lt;-</span> <span class="fu">st_read</span>(shp_file)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Reading layer `voivodeships' from data source 
-  `/tmp/Rtmp9pjjFu/voivodeships/voivodeships.shp' using driver `ESRI Shapefile'
+  `/tmp/RtmpGyklyD/voivodeships/voivodeships.shp' using driver `ESRI Shapefile'
 Simple feature collection with 16 features and 36 fields
 Geometry type: MULTIPOLYGON
 Dimension:     XY
